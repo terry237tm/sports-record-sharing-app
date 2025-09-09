@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash .claude/scripts/test-and-log.sh:*)",
+      "Bash(.claude/scripts/test-and-log.sh:*)",
+      "Bash(bash .claude/scripts/pm/*)",
+      "Bash(.claude/scripts/pm/*)",
+
+      "Bash(cat *)",
+      "Bash(cat:*)",
+      "Bash(find *)",
+      "Bash(gh *)",
+      "Bash(git *)",
+      "Bash(grep *)",
+      "Bash(kill:*)",
+      "Bash(ln:*)",
+      "Bash(ls *)",
+      "Bash(mv *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(pnpm *)",
+      "Bash(python *)",
+      "Bash(rm *)",
+      "Bash(sed *)",
+      "Bash(sed:*)",
+      "Bash(touch *)",
+      "Bash(tree *)",
+      "Bash(taro *)",
+      "Bash(curl *)",
+      "Bash(which *)",
+      "List(**)",
+      "WebFetch(domain:github.com)",
+      "WebSearch"
+    ]
+  }
+}

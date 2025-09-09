@@ -1,0 +1,55 @@
+{
+  "compilerOptions": {
+    /* 基础选项 */
+    "target": "es2017",
+    "lib": ["es2017", "dom"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    
+    /* 严格模式 */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    
+    /* 路径别名 */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    
+    /* 其他选项 */
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "declaration": false,
+    "skipLibCheck": true,
+    
+    /* Taro 特定 */
+    "types": [
+      "@tarojs/taro",
+      "@types/node"
+    ]
+  },
+  "include": [
+    "./src",
+    "./types"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".temp"
+  ]
+}

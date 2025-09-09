@@ -1,0 +1,18 @@
+{
+  "name": "hello-cloud-function",
+  "version": "1.0.0",
+  "description": "CloudBase Hello Function - 返回问候消息",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "node -r ts-node/register index.ts"
+  },
+  "dependencies": {
+    "@types/aws-lambda": "^8.10.119"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0"
+  }
+}
