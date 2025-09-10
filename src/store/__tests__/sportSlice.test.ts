@@ -319,4 +319,4 @@ describe('运动记录状态管理', () => {
       expect(state4.saveLoading).toBe(true)
     })
   })
-})','file_path':'/Users/tangzr/main/taro_rebuild_sports/src/store/__tests__/sportSlice.test.ts'}<parameter name=
+})

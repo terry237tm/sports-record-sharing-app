@@ -528,13 +528,13 @@ export default uiUtils
 // 重新导出所有UI相关类型
 export type {
   UIState as TUIState,
-  UIState['systemInfo'] as TSystemInfo,
-  UIState['navigationBar'] as TNavigationBar,
-  UIState['tabBar'] as TTabBar,
-  UIState['modals'] as TModals,
-  UIState['toast'] as TToast,
-  UIState['actionSheetItems'] as TActionSheetItems,
-  UIState['imagePreview'] as TImagePreview,
-  UIState['pullDownRefresh'] as TPullDownRefresh,
-  UIState['pullUpLoad'] as TPullUpLoad
+  SystemInfo as TSystemInfo,
+  NavigationBar as TNavigationBar,
+  TabBar as TTabBar,
+  Modals as TModals,
+  Toast as TToast,
+  ActionSheetItems as TActionSheetItems,
+  ImagePreview as TImagePreview,
+  PullDownRefresh as TPullDownRefresh,
+  PullUpLoad as TPullUpLoad
 } from './uiSlice'

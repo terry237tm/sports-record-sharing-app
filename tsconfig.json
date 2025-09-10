@@ -40,7 +40,8 @@
     /* Taro 特定 */
     "types": [
       "@tarojs/taro",
-      "@types/node"
+      "@types/node",
+      "jest"
     ]
   },
   "include": [
