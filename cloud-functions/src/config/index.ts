@@ -3,6 +3,9 @@ import * as dotenv from 'dotenv'
 // 加载环境变量
 dotenv.config()
 
+// 数据库管理器
+export * from './database'
+
 export const config = {
   // 云开发配置
   cloudbase: {

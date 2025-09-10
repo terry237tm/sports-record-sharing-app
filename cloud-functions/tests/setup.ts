@@ -1,6 +1,6 @@
 // 测试环境设置
-process.env.NODE_ENV = 'test'
-process.env.DEBUG = 'false'
+process.env['NODE_ENV'] = 'test'
+process.env['DEBUG'] = 'false'
 
 // 全局测试配置
 global.console = {
@@ -37,7 +37,8 @@ jest.mock('@cloudbase/node-sdk', () => ({
           count: jest.fn(),
           orderBy: jest.fn(() => ({
             limit: jest.fn(() => ({
-              get: jest.fn())),
+              get: jest.fn()
+            })),
             skip: jest.fn(() => ({
               limit: jest.fn(() => ({
                 get: jest.fn()
@@ -57,7 +58,7 @@ jest.mock('@cloudbase/node-sdk', () => ({
 }))
 
 // 全局测试工具函数
-global.testUtils = {
+const testUtils = {
   createMockRequest: (overrides = {}) => ({
     method: 'GET',
     url: '/',
@@ -81,11 +82,6 @@ global.testUtils = {
   createMockNextFunction: () => jest.fn()
 }
 
-// 扩展全局类型
-declare global {
-  var testUtils: {
-    createMockRequest: (overrides?: any) => any
-    createMockResponse: () => any
-    createMockNextFunction: () => jest.Mock
-  }
-}
+// 设置全局变量
+;(global as any).testUtils = testUtils
+
