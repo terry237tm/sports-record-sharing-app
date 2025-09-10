@@ -398,6 +398,390 @@ export function maskSensitiveData(data: string, start: number = 3, end: number =
   return `${startStr}${maskStr}${endStr}`
 }
 
+/**
+ * 验证规则接口
+ */
+export interface ValidationRule {
+  required?: boolean
+  type?: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'email' | 'phone' | 'idCard' | 'date'
+  minLength?: number
+  maxLength?: number
+  min?: number
+  max?: number
+  pattern?: RegExp
+  enum?: any[]
+  custom?: (value: any) => boolean | string
+}
+
+/**
+ * 验证错误接口
+ */
+export interface ValidationError {
+  field: string
+  message: string
+  value?: any
+  rule?: string
+}
+
+/**
+ * 验证结果接口
+ */
+export interface ValidationResult {
+  valid: boolean
+  errors: ValidationError[]
+}
+
+/**
+ * 验证器类
+ */
+export class EnhancedValidator {
+  private errors: ValidationError[] = []
+
+  /**
+   * 验证字符串
+   */
+  validateString(value: any, field: string, rules: ValidationRule = {}): boolean {
+    // 检查必填
+    if (rules.required && this.isEmpty(value)) {
+      this.addError(field, `${field}不能为空`)
+      return false
+    }
+
+    // 如果不是必填且为空，则跳过其他验证
+    if (!rules.required && this.isEmpty(value)) {
+      return true
+    }
+
+    // 检查类型
+    if (typeof value !== 'string') {
+      this.addError(field, `${field}必须是字符串`)
+      return false
+    }
+
+    const strValue = value as string
+
+    // 检查长度
+    if (rules.minLength && strValue.length < rules.minLength) {
+      this.addError(field, `${field}长度不能少于${rules.minLength}个字符`)
+      return false
+    }
+
+    if (rules.maxLength && strValue.length > rules.maxLength) {
+      this.addError(field, `${field}长度不能超过${rules.maxLength}个字符`)
+      return false
+    }
+
+    // 检查模式
+    if (rules.pattern && !rules.pattern.test(strValue)) {
+      this.addError(field, `${field}格式不正确`)
+      return false
+    }
+
+    // 检查枚举
+    if (rules.enum && !rules.enum.includes(strValue)) {
+      this.addError(field, `${field}必须是以下值之一: ${rules.enum.join(', ')}`)
+      return false
+    }
+
+    // 特殊类型验证
+    if (rules.type === 'email' && !this.isValidEmail(strValue)) {
+      this.addError(field, `${field}必须是有效的邮箱地址`)
+      return false
+    }
+
+    if (rules.type === 'phone' && !this.isValidPhone(strValue)) {
+      this.addError(field, `${field}必须是有效的手机号码`)
+      return false
+    }
+
+    if (rules.type === 'idCard' && !this.isValidIdCard(strValue)) {
+      this.addError(field, `${field}必须是有效的身份证号码`)
+      return false
+    }
+
+    // 自定义验证
+    if (rules.custom) {
+      const result = rules.custom(strValue)
+      if (result !== true) {
+        this.addError(field, typeof result === 'string' ? result : `${field}验证失败`)
+        return false
+      }
+    }
+
+    return true
+  }
+
+  /**
+   * 验证数字
+   */
+  validateNumber(value: any, field: string, rules: ValidationRule = {}): boolean {
+    // 检查必填
+    if (rules.required && (value === null || value === undefined)) {
+      this.addError(field, `${field}不能为空`)
+      return false
+    }
+
+    // 如果不是必填且为空，则跳过其他验证
+    if (!rules.required && (value === null || value === undefined)) {
+      return true
+    }
+
+    // 转换为数字
+    const numValue = typeof value === 'string' ? parseFloat(value) : value
+
+    // 检查是否为有效数字
+    if (isNaN(numValue) || typeof numValue !== 'number') {
+      this.addError(field, `${field}必须是有效的数字`)
+      return false
+    }
+
+    // 检查最小值
+    if (rules.min !== undefined && numValue < rules.min) {
+      this.addError(field, `${field}不能小于${rules.min}`)
+      return false
+    }
+
+    // 检查最大值
+    if (rules.max !== undefined && numValue > rules.max) {
+      this.addError(field, `${field}不能大于${rules.max}`)
+      return false
+    }
+
+    // 自定义验证
+    if (rules.custom) {
+      const result = rules.custom(numValue)
+      if (result !== true) {
+        this.addError(field, typeof result === 'string' ? result : `${field}验证失败`)
+        return false
+      }
+    }
+
+    return true
+  }
+
+  /**
+   * 验证对象结构
+   */
+  validateObjectSchema(obj: any, schema: Record<string, ValidationRule>): ValidationResult {
+    this.errors = []
+
+    for (const field in schema) {
+      if (schema.hasOwnProperty(field)) {
+        const rules = schema[field]
+        const value = obj[field]
+        
+        this.validateField(value, field, rules)
+      }
+    }
+
+    return {
+      valid: this.errors.length === 0,
+      errors: this.errors
+    }
+  }
+
+  /**
+   * 验证字段
+   */
+  private validateField(value: any, field: string, rules: ValidationRule): void {
+    switch (rules.type) {
+      case 'string':
+        this.validateString(value, field, rules)
+        break
+      case 'number':
+        this.validateNumber(value, field, rules)
+        break
+      case 'email':
+        this.validateString(value, field, { ...rules, type: 'email' })
+        break
+      case 'phone':
+        this.validateString(value, field, { ...rules, type: 'phone' })
+        break
+      case 'idCard':
+        this.validateString(value, field, { ...rules, type: 'idCard' })
+        break
+      case 'date':
+        this.validateDate(value, field, rules)
+        break
+      default:
+        // 默认按字符串处理
+        this.validateString(value, field, rules)
+        break
+    }
+  }
+
+  /**
+   * 验证日期
+   */
+  validateDate(value: any, field: string, rules: ValidationRule = {}): boolean {
+    // 检查必填
+    if (rules.required && (value === null || value === undefined)) {
+      this.addError(field, `${field}不能为空`)
+      return false
+    }
+
+    // 如果不是必填且为空，则跳过其他验证
+    if (!rules.required && (value === null || value === undefined)) {
+      return true
+    }
+
+    // 检查是否为有效日期
+    const dateValue = value instanceof Date ? value : new Date(value)
+    if (isNaN(dateValue.getTime())) {
+      this.addError(field, `${field}必须是有效的日期`)
+      return false
+    }
+
+    return true
+  }
+
+  /**
+   * 添加错误
+   */
+  private addError(field: string, message: string, value?: any): void {
+    this.errors.push({
+      field,
+      message,
+      value
+    })
+  }
+
+  /**
+   * 检查是否为空
+   */
+  private isEmpty(value: any): boolean {
+    return value === null || value === undefined || value === ''
+  }
+
+  /**
+   * 验证邮箱
+   */
+  private isValidEmail(email: string): boolean {
+    return validateEmail(email)
+  }
+
+  /**
+   * 验证手机号
+   */
+  private isValidPhone(phone: string): boolean {
+    return validatePhone(phone)
+  }
+
+  /**
+   * 验证身份证
+   */
+  private isValidIdCard(idCard: string): boolean {
+    return validateIdCard(idCard)
+  }
+
+  /**
+   * 获取验证结果
+   */
+  getResult(): ValidationResult {
+    return {
+      valid: this.errors.length === 0,
+      errors: this.errors
+    }
+  }
+
+  /**
+   * 重置错误
+   */
+  reset(): void {
+    this.errors = []
+  }
+}
+
+/**
+ * 验证中间件
+ */
+export const validationMiddleware = (schema: Record<string, ValidationRule>) => {
+  return (req: any, res: any, next: any) => {
+    const validator = new EnhancedValidator()
+    const result = validator.validateObjectSchema(req.body, schema)
+    
+    if (!result.valid) {
+      return res.status(400).json({
+        success: false,
+        code: 400,
+        message: '参数验证失败',
+        errors: result.errors,
+        timestamp: new Date().toISOString()
+      })
+    }
+    
+    next()
+  }
+}
+
+/**
+ * 快速验证函数
+ */
+export const validate = {
+  /**
+   * 验证必填字段
+   */
+  required(value: any, field: string = '字段'): ValidationResult {
+    const validator = new EnhancedValidator()
+    validator.validateString(value, field, { required: true })
+    return validator.getResult()
+  },
+
+  /**
+   * 验证邮箱
+   */
+  email(value: any, field: string = '邮箱'): ValidationResult {
+    const validator = new EnhancedValidator()
+    validator.validateEmail(value, field)
+    return validator.getResult()
+  },
+
+  /**
+   * 验证手机号
+   */
+  phone(value: any, field: string = '手机号'): ValidationResult {
+    const validator = new EnhancedValidator()
+    validator.validatePhone(value, field)
+    return validator.getResult()
+  },
+
+  /**
+   * 验证身份证
+   */
+  idCard(value: any, field: string = '身份证号'): ValidationResult {
+    const validator = new EnhancedValidator()
+    validator.validateIdCard(value, field)
+    return validator.getResult()
+  },
+
+  /**
+   * 验证数字范围
+   */
+  numberRange(value: any, min: number, max: number, field: string = '数字'): ValidationResult {
+    const validator = new EnhancedValidator()
+    validator.validateNumber(value, field, { min, max })
+    return validator.getResult()
+  },
+
+  /**
+   * 验证字符串长度
+   */
+  stringLength(value: any, minLength: number, maxLength: number, field: string = '字符串'): ValidationResult {
+    const validator = new EnhancedValidator()
+    validator.validateString(value, field, { minLength, maxLength })
+    return validator.getResult()
+  },
+
+  /**
+   * 验证枚举值
+   */
+  enum(value: any, enumValues: any[], field: string = '枚举值'): ValidationResult {
+    const validator = new EnhancedValidator()
+    validator.validateString(value, field, { enum: enumValues })
+    return validator.getResult()
+  }
+}
+
 export default {
   validatePhone,
   validateEmail,
@@ -422,5 +806,8 @@ export default {
   validateFileSize,
   generateRandomString,
   generateUniqueId,
-  maskSensitiveData
+  maskSensitiveData,
+  EnhancedValidator,
+  validationMiddleware,
+  validate
 }

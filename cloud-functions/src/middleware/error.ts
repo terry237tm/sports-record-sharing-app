@@ -1,17 +1,29 @@
 import { Request, Response, NextFunction } from 'express'
-import { ResponseUtil } from '../utils'
+import { ResponseUtil, Logger } from '../utils'
 
 /**
  * 错误处理中间件
  */
 export const errorHandler = (err: any, req: Request, res: Response, _next: NextFunction) => {
-  console.error('错误处理中间件:', {
+  const errorContext = {
     error: err.message,
     stack: err.stack,
     url: req.url,
     method: req.method,
-    timestamp: new Date().toISOString()
-  })
+    timestamp: new Date().toISOString(),
+    userAgent: req.headers['user-agent'],
+    ip: req.ip || req.connection.remoteAddress,
+    userId: (req as any).user?.userId || 'anonymous'
+  }
+
+  // 根据错误级别记录日志
+  if (err.statusCode >= 500 || err.statusCode === undefined) {
+    Logger.error('系统错误', errorContext)
+  } else if (err.statusCode >= 400) {
+    Logger.warn('客户端错误', errorContext)
+  } else {
+    Logger.info('应用错误', errorContext)
+  }
 
   // 默认错误信息
   let statusCode = 500
@@ -73,6 +85,14 @@ export const errorHandler = (err: any, req: Request, res: Response, _next: NextF
  * 404 处理中间件
  */
 export const notFoundHandler = (req: Request, res: Response) => {
+  Logger.warn('404 错误', {
+    path: req.path,
+    method: req.method,
+    userAgent: req.headers['user-agent'],
+    ip: req.ip || req.connection.remoteAddress,
+    timestamp: new Date().toISOString()
+  })
+  
   res.status(404).json(ResponseUtil.error('请求的资源不存在', 404, {
     code: 'NOT_FOUND',
     path: req.path,
@@ -85,7 +105,31 @@ export const notFoundHandler = (req: Request, res: Response) => {
  * 用于捕获异步函数中的错误并传递给错误处理中间件
  */
 export const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
-  Promise.resolve(fn(req, res, next)).catch(next)
+  try {
+    const result = fn(req, res, next)
+    if (result && typeof result.catch === 'function') {
+      result.catch((error: any) => {
+        Logger.error('异步函数错误', {
+          error: error.message,
+          stack: error.stack,
+          url: req.url,
+          method: req.method,
+          functionName: fn.name || 'anonymous'
+        })
+        next(error)
+      })
+    }
+    return result
+  } catch (error) {
+    Logger.error('同步函数错误', {
+      error: (error as Error).message,
+      stack: (error as Error).stack,
+      url: req.url,
+      method: req.method,
+      functionName: fn.name || 'anonymous'
+    })
+    next(error)
+  }
 }
 
 /**
