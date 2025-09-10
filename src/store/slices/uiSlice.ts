@@ -443,7 +443,7 @@ export const isIPhoneXSeries = (systemInfo: UIState['systemInfo']) => {
   if (!systemInfo) return false
   
   const { screenHeight, statusBarHeight } = systemInfo
-  return /iphone/xi.test(systemInfo.system) && screenHeight >= 812 && statusBarHeight >= 44
+  return /iphone/i.test(systemInfo.system) && screenHeight >= 812 && statusBarHeight >= 44
 }
 
 // 默认Toast配置

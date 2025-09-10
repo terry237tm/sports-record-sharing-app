@@ -50,5 +50,11 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   Action<string>
 >
 
+// 导出 sport 相关的异步操作
+export * from './sportThunks'
+
+// 导出 sport 相关的选择器
+export * from './sportSelectors'
+
 // 导出 store 实例
 export default store
