@@ -222,7 +222,7 @@ export const ImageUploadConfig = {
  * 通用API响应数据结构
  * @template T 响应数据的类型，默认为任意类型
  */
-export interface ApiResponse<T = any> = {
+export interface ApiResponse<T = any> {
   code: number
   message: string
   data: T
