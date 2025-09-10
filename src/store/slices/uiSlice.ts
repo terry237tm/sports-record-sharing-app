@@ -3,6 +3,12 @@
  */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { 
+  showToast as showToastThunk,
+  hideToast as hideToastThunk,
+  setGlobalLoading as setGlobalLoadingThunk,
+  setPageLoading as setPageLoadingThunk
+} from '../uiThunks'
 
 // UI状态接口
 interface UIState {
@@ -322,6 +328,34 @@ const uiSlice = createSlice({
     
     // 重置所有状态
     resetState: () => initialState
+  },
+  extraReducers: (builder) => {
+    // Toast异步操作
+    builder
+      .addCase(showToastThunk.fulfilled, (state, action) => {
+        state.toast = { ...state.toast, ...action.payload, show: true }
+      })
+      .addCase(hideToastThunk.fulfilled, (state) => {
+        state.toast.show = false
+      })
+
+    // 全局加载异步操作
+    builder
+      .addCase(setGlobalLoadingThunk.fulfilled, (state, action) => {
+        state.globalLoading = action.payload.loading
+        if (action.payload.text) {
+          state.globalLoadingText = action.payload.text
+        }
+      })
+
+    // 页面加载异步操作
+    builder
+      .addCase(setPageLoadingThunk.fulfilled, (state, action) => {
+        state.pageLoading = action.payload.loading
+        if (action.payload.text) {
+          state.pageLoadingText = action.payload.text
+        }
+      })
   }
 })
 
@@ -531,10 +565,10 @@ export type {
   SystemInfo as TSystemInfo,
   NavigationBar as TNavigationBar,
   TabBar as TTabBar,
-  Modals as TModals,
-  Toast as TToast,
-  ActionSheetItems as TActionSheetItems,
-  ImagePreview as TImagePreview,
-  PullDownRefresh as TPullDownRefresh,
-  PullUpLoad as TPullUpLoad
-} from './uiSlice'
+  TModals,
+  TToast,
+  TActionSheetItems,
+  TImagePreview,
+  TPullDownRefresh,
+  TPullUpLoad
+}

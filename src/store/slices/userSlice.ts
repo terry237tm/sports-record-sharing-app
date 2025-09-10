@@ -4,6 +4,20 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { UserInfo, UserSettings, UserStatistics, UserLevel, UserAchievement, UserPermission, UserStatus } from '@/types'
+import { 
+  loginUser, 
+  fetchUserInfo, 
+  updateUserInfo as updateUserInfoThunk, 
+  fetchUserSettings, 
+  updateUserSettings as updateUserSettingsThunk,
+  fetchUserStatistics,
+  fetchUserLevel,
+  fetchUserAchievements,
+  syncWechatUserInfo,
+  logoutUser,
+  checkSessionValidity,
+  refreshUserToken
+} from '../userThunks'
 
 // 用户状态接口
 interface UserState {
@@ -267,6 +281,211 @@ const userSlice = createSlice({
     
     // 重置所有状态
     resetState: () => initialState
+  },
+  extraReducers: (builder) => {
+    // 用户登录
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.loginLoading = true
+        state.loginError = null
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loginLoading = false
+        state.userInfo = action.payload.userInfo
+        state.isLoggedIn = true
+        state.status = UserStatus.ACTIVE
+        state.sessionToken = action.payload.token
+        state.sessionExpiresAt = action.payload.expiresAt
+        state.permissions = [UserPermission.CREATE_RECORD, UserPermission.UPDATE_RECORD, UserPermission.DELETE_RECORD, UserPermission.SHARE_RECORD, UserPermission.VIEW_STATISTICS, UserPermission.MANAGE_SETTINGS]
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loginLoading = false
+        state.loginError = action.payload as string
+        state.isLoggedIn = false
+        state.userInfo = null
+        state.status = UserStatus.INACTIVE
+      })
+
+    // 获取用户信息
+    builder
+      .addCase(fetchUserInfo.pending, (state) => {
+        state.userInfoLoading = true
+        state.userInfoError = null
+      })
+      .addCase(fetchUserInfo.fulfilled, (state, action) => {
+        state.userInfoLoading = false
+        state.userInfo = action.payload
+        state.isLoggedIn = true
+        state.status = UserStatus.ACTIVE
+      })
+      .addCase(fetchUserInfo.rejected, (state, action) => {
+        state.userInfoLoading = false
+        state.userInfoError = action.payload as string
+      })
+
+    // 更新用户信息
+    builder
+      .addCase(updateUserInfoThunk.pending, (state) => {
+        state.userInfoLoading = true
+        state.userInfoError = null
+      })
+      .addCase(updateUserInfoThunk.fulfilled, (state, action) => {
+        state.userInfoLoading = false
+        state.userInfo = action.payload
+      })
+      .addCase(updateUserInfoThunk.rejected, (state, action) => {
+        state.userInfoLoading = false
+        state.userInfoError = action.payload as string
+      })
+
+    // 获取用户设置
+    builder
+      .addCase(fetchUserSettings.pending, (state) => {
+        state.settingsLoading = true
+        state.settingsError = null
+      })
+      .addCase(fetchUserSettings.fulfilled, (state, action) => {
+        state.settingsLoading = false
+        state.settings = action.payload
+      })
+      .addCase(fetchUserSettings.rejected, (state, action) => {
+        state.settingsLoading = false
+        state.settingsError = action.payload as string
+      })
+
+    // 更新用户设置
+    builder
+      .addCase(updateUserSettingsThunk.pending, (state) => {
+        state.settingsLoading = true
+        state.settingsError = null
+      })
+      .addCase(updateUserSettingsThunk.fulfilled, (state, action) => {
+        state.settingsLoading = false
+        state.settings = action.payload
+      })
+      .addCase(updateUserSettingsThunk.rejected, (state, action) => {
+        state.settingsLoading = false
+        state.settingsError = action.payload as string
+      })
+
+    // 获取用户统计
+    builder
+      .addCase(fetchUserStatistics.pending, (state) => {
+        state.statisticsLoading = true
+        state.statisticsError = null
+      })
+      .addCase(fetchUserStatistics.fulfilled, (state, action) => {
+        state.statisticsLoading = false
+        state.statistics = action.payload
+      })
+      .addCase(fetchUserStatistics.rejected, (state, action) => {
+        state.statisticsLoading = false
+        state.statisticsError = action.payload as string
+      })
+
+    // 获取用户等级
+    builder
+      .addCase(fetchUserLevel.pending, (state) => {
+        state.levelLoading = true
+        state.levelError = null
+      })
+      .addCase(fetchUserLevel.fulfilled, (state, action) => {
+        state.levelLoading = false
+        state.level = action.payload
+      })
+      .addCase(fetchUserLevel.rejected, (state, action) => {
+        state.levelLoading = false
+        state.levelError = action.payload as string
+      })
+
+    // 获取用户成就
+    builder
+      .addCase(fetchUserAchievements.pending, (state) => {
+        state.achievementsLoading = true
+        state.achievementsError = null
+      })
+      .addCase(fetchUserAchievements.fulfilled, (state, action) => {
+        state.achievementsLoading = false
+        state.achievements = action.payload
+      })
+      .addCase(fetchUserAchievements.rejected, (state, action) => {
+        state.achievementsLoading = false
+        state.achievementsError = action.payload as string
+      })
+
+    // 同步微信用户信息
+    builder
+      .addCase(syncWechatUserInfo.pending, (state) => {
+        state.userInfoLoading = true
+        state.userInfoError = null
+      })
+      .addCase(syncWechatUserInfo.fulfilled, (state, action) => {
+        state.userInfoLoading = false
+        state.userInfo = action.payload
+      })
+      .addCase(syncWechatUserInfo.rejected, (state, action) => {
+        state.userInfoLoading = false
+        state.userInfoError = action.payload as string
+      })
+
+    // 用户登出
+    builder
+      .addCase(logoutUser.pending, (state) => {
+        state.loginLoading = true
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loginLoading = false
+        state.userInfo = null
+        state.isLoggedIn = false
+        state.status = UserStatus.INACTIVE
+        state.permissions = []
+        state.sessionToken = null
+        state.sessionExpiresAt = null
+        state.statistics = null
+        state.level = null
+        state.achievements = []
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loginLoading = false
+        state.loginError = action.payload as string
+      })
+
+    // 检查会话有效性
+    builder
+      .addCase(checkSessionValidity.pending, () => {
+        // 可以添加会话检查加载状态
+      })
+      .addCase(checkSessionValidity.fulfilled, (state, action) => {
+        if (!action.payload.valid) {
+          // 会话无效，清除登录状态
+          state.isLoggedIn = false
+          state.userInfo = null
+          state.status = UserStatus.INACTIVE
+          state.sessionToken = null
+          state.sessionExpiresAt = null
+        }
+      })
+      .addCase(checkSessionValidity.rejected, (state, action) => {
+        // 检查失败，可以记录错误但不改变登录状态
+        console.error('会话检查失败:', action.payload)
+      })
+
+    // 刷新用户Token
+    builder
+      .addCase(refreshUserToken.pending, () => {
+        // 可以添加token刷新加载状态
+      })
+      .addCase(refreshUserToken.fulfilled, (state, action) => {
+        state.sessionToken = action.payload.token
+        state.sessionExpiresAt = action.payload.expiresAt
+      })
+      .addCase(refreshUserToken.rejected, (state, action) => {
+        console.error('Token刷新失败:', action.payload)
+        // Token刷新失败，可能需要重新登录
+        state.isLoggedIn = false
+        state.sessionToken = null
+        state.sessionExpiresAt = null
+      })
   }
 })
 
@@ -449,13 +668,6 @@ export const userUtils = {
 } as const
 
 export type UserUtils = typeof userUtils
-export type { UserState } from './userSlice' // 重新导出类型，避免循环依赖
-export type { UserInfo, UserSettings, UserStatistics, UserLevel, UserAchievement } from '@/types/user' // 重新导出类型，方便使用
-export { UserPermission, UserStatus } from '@/types/user' // 重新导出枚举
-export { DefaultUserSettings } from '@/types/user' // 重新导出默认设置
-
-// 默认导出用户相关工具
-export default userUtils
 
 // 重新导出所有用户相关类型
 export type {

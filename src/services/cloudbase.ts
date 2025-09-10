@@ -166,3 +166,132 @@ export function getCloudBaseConfig() {
     isReady: isCloudBaseReady()
   };
 }
+
+/**
+ * 云函数调用服务
+ * 提供统一的云函数调用接口
+ */
+export class CloudbaseService {
+  /**
+   * 调用云函数
+   * @param name 云函数名称
+   * @param data 传递给云函数的参数
+   * @returns 返回云函数执行结果
+   */
+  async callFunction(name: string, data: any = {}): Promise<any> {
+    try {
+      // 检查 CloudBase SDK 是否可用
+      if (typeof window !== 'undefined' && (window as any).cloudbase) {
+        // 使用 CloudBase JS SDK
+        const cloudbase = (window as any).cloudbase;
+        
+        // 初始化 CloudBase（如果还没有初始化）
+        if (!this.app) {
+          this.app = cloudbase.init({
+            env: CLOUDBASE_CONFIG.env
+          });
+        }
+        
+        // 调用云函数
+        const result = await this.app.callFunction({
+          name,
+          data
+        });
+        
+        if (result.result && result.result.code === 0) {
+          return {
+            success: true,
+            data: result.result.data,
+            message: result.result.message
+          };
+        } else {
+          return {
+            success: false,
+            message: result.result?.message || '云函数返回错误',
+            data: null
+          };
+        }
+      } else {
+        // CloudBase SDK 未加载，使用模拟数据
+        console.warn('CloudBase SDK 未加载，使用模拟数据');
+        return this.getMockResponse(name, data);
+      }
+    } catch (error) {
+      console.error('云函数调用错误:', error);
+      
+      // 如果云函数调用失败，使用模拟数据
+      if (process.env.NODE_ENV === 'development') {
+        console.log('开发环境：云函数调用失败，使用模拟数据');
+        return this.getMockResponse(name, data);
+      }
+      
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : '云函数调用失败',
+        data: null
+      };
+    }
+  }
+  
+  private app: any = null;
+  
+  /**
+   * 获取模拟响应数据
+   * @param name 云函数名称
+   * @param data 请求参数
+   * @returns 模拟响应数据
+   */
+  private getMockResponse(name: string, _data: any): any {
+    // 这里可以根据不同的云函数名称返回相应的模拟数据
+    switch (name) {
+      case 'loginUser':
+        return {
+          success: true,
+          data: {
+            userInfo: {
+              openid: 'mock_openid_' + Date.now(),
+              nickname: 'MockUser',
+              avatar: '/assets/images/default-avatar.png'
+            },
+            session: {
+              openid: 'mock_openid_' + Date.now(),
+              sessionKey: 'mock_session_key',
+              expiresIn: 7200,
+              createTime: Date.now(),
+              lastActiveTime: Date.now()
+            },
+            token: 'mock_jwt_token_' + Date.now(),
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+            isNewUser: false
+          },
+          message: '登录成功'
+        };
+      
+      case 'getUserInfo':
+        return {
+          success: true,
+          data: {
+            openid: 'mock_openid_' + Date.now(),
+            nickname: 'MockUser',
+            avatar: '/assets/images/default-avatar.png',
+            gender: 1,
+            city: '北京',
+            province: '北京',
+            country: '中国',
+            language: 'zh_CN'
+          },
+          message: '获取用户信息成功'
+        };
+      
+      default:
+        return {
+          success: true,
+          data: null,
+          message: '模拟响应'
+        };
+    }
+  }
+}
+
+// 创建 CloudbaseService 实例
+export const cloudbaseService = new CloudbaseService();
