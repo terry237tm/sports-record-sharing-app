@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "openapi": [
+      "security.msgSecCheck",
+      "security.imgSecCheck",
+      "openapi.wxacode.get"
+    ]
+  },
+  "timeout": 30,
+  "memory": 512,
+  "triggers": [],
+  "environment": {
+    "NODE_ENV": "production"
+  }
+}

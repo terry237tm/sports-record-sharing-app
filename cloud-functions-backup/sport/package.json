@@ -1,0 +1,28 @@
+{
+  "name": "sport-cloud-function",
+  "version": "1.0.0",
+  "description": "运动记录相关云函数",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc",
+    "deploy": "npm run build && cloudbase functions:deploy sport"
+  },
+  "dependencies": {
+    "@cloudbase/node-sdk": "^2.9.1",
+    "tencentcloud-sdk-nodejs": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0",
+    "ts-jest": "^29.0.0"
+  },
+  "cloud-function": {
+    "name": "sport",
+    "timeout": 30,
+    "memory": 512,
+    "triggers": []
+  }
+}

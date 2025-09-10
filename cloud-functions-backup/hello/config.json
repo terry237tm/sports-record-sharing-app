@@ -1,0 +1,30 @@
+{
+  "name": "hello",
+  "version": "1.0.0",
+  "description": "返回问候消息的 CloudBase 云函数",
+  "main": "dist/index.js",
+  "runtime": "Nodejs16.13",
+  "entryFile": "index.js",
+  "memorySize": 128,
+  "timeout": 3,
+  "environment": {
+    "variables": {}
+  },
+  "triggers": [
+    {
+      "name": "http",
+      "type": "http",
+      "properties": {
+        "path": "/hello",
+        "method": "GET,POST,OPTIONS",
+        "authType": "ANONYMOUS",
+        "cors": {
+          "enable": true,
+          "origin": "*",
+          "methods": "GET,POST,OPTIONS",
+          "headers": "Content-Type"
+        }
+      }
+    }
+  ]
+}
