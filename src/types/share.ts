@@ -1,8 +1,12 @@
 /**
  * 分享功能相关类型定义
+ * 包含分享图片生成、Canvas绘制、平台配置等相关接口和枚举
  */
 
-// 分享图片配置
+/**
+ * 分享图片配置
+ * 分享图片的基本尺寸和样式配置
+ */
 export interface ShareImageConfig {
   width: number // 图片宽度
   height: number // 图片高度
@@ -11,7 +15,10 @@ export interface ShareImageConfig {
   borderRadius: number // 圆角
 }
 
-// 分享图片数据
+/**
+ * 分享图片数据
+ * 用于生成分享图片的数据结构
+ */
 export interface ShareImageData {
   userInfo: {
     avatar: string // 用户头像URL
@@ -32,7 +39,10 @@ export interface ShareImageData {
   images: string[] // 要展示的图片URLs
 }
 
-// Canvas绘制配置
+/**
+ * Canvas绘制配置
+ * Canvas绘制时的字体、颜色、间距等配置选项
+ */
 export interface CanvasDrawConfig {
   fontSize: {
     title: number // 标题字体大小
@@ -55,7 +65,10 @@ export interface CanvasDrawConfig {
   }
 }
 
-// 分享图片样式配置
+/**
+ * 分享图片样式配置
+ * 默认的分享图片样式配置常量
+ */
 export const ShareImageStyles: CanvasDrawConfig = {
   fontSize: {
     title: 32,
@@ -78,14 +91,20 @@ export const ShareImageStyles: CanvasDrawConfig = {
   }
 }
 
-// 分享平台枚举
+/**
+ * 分享平台枚举
+ * 支持的分享目标平台
+ */
 export enum SharePlatform {
   WECHAT = 'wechat', // 微信好友
   MOMENTS = 'moments', // 微信朋友圈
   SAVE = 'save' // 保存到相册
 }
 
-// 分享平台配置
+/**
+ * 分享平台配置
+ * 各分享平台的显示配置信息
+ */
 export const SharePlatformConfig = {
   [SharePlatform.WECHAT]: {
     name: '微信好友',
@@ -104,7 +123,10 @@ export const SharePlatformConfig = {
   }
 } as const
 
-// 分享结果
+/**
+ * 分享结果
+ * 分享操作的结果反馈
+ */
 export interface ShareResult {
   success: boolean
   platform: SharePlatform
@@ -112,7 +134,10 @@ export interface ShareResult {
   imagePath?: string // 生成的图片路径（保存时）
 }
 
-// Canvas绘制结果
+/**
+ * Canvas绘制结果
+ * Canvas绘制操作的执行结果
+ */
 export interface CanvasDrawResult {
   success: boolean
   canvas?: HTMLCanvasElement
@@ -120,7 +145,10 @@ export interface CanvasDrawResult {
   error?: string
 }
 
-// 图片处理配置
+/**
+ * 图片处理配置
+ * 图片处理时的压缩和质量配置
+ */
 export interface ImageProcessConfig {
   maxWidth: number // 最大宽度
   maxHeight: number // 最大高度
@@ -128,7 +156,10 @@ export interface ImageProcessConfig {
   format: 'image/jpeg' | 'image/png' // 输出格式
 }
 
-// 默认图片处理配置
+/**
+ * 默认图片处理配置
+ * 默认的图片处理配置常量
+ */
 export const DefaultImageProcessConfig: ImageProcessConfig = {
   maxWidth: 750,
   maxHeight: 1334,
@@ -136,14 +167,20 @@ export const DefaultImageProcessConfig: ImageProcessConfig = {
   format: 'image/jpeg'
 }
 
-// 分享图片尺寸配置
+/**
+ * 分享图片尺寸配置
+ * 分享图片的标准尺寸配置
+ */
 export const ShareImageDimensions = {
   width: 750,
   height: 1334,
   ratio: 2 // 2倍清晰度导出
 } as const
 
-// 分享模板类型
+/**
+ * 分享模板类型
+ * 支持的分享图片模板类型
+ */
 export enum ShareTemplateType {
   STANDARD = 'standard', // 标准模板
   MINIMAL = 'minimal', // 简约模板
@@ -151,7 +188,10 @@ export enum ShareTemplateType {
   POSTER = 'poster' // 海报模板
 }
 
-// 分享模板配置
+/**
+ * 分享模板配置
+ * 分享模板的配置信息
+ */
 export interface ShareTemplateConfig {
   type: ShareTemplateType
   name: string
@@ -160,7 +200,10 @@ export interface ShareTemplateConfig {
   layout: 'vertical' | 'horizontal' | 'card' // 布局方式
 }
 
-// 可用分享模板
+/**
+ * 可用分享模板
+ * 系统预设的可用分享模板列表
+ */
 export const AvailableShareTemplates: ShareTemplateConfig[] = [
   {
     type: ShareTemplateType.STANDARD,
@@ -185,7 +228,10 @@ export const AvailableShareTemplates: ShareTemplateConfig[] = [
   }
 ]
 
-// 分享统计
+/**
+ * 分享统计
+ * 分享功能的使用统计数据
+ */
 export interface ShareStatistics {
   totalShares: number // 总分享次数
   platformShares: Record<SharePlatform, number> // 各平台分享次数
@@ -193,7 +239,10 @@ export interface ShareStatistics {
   weeklyShares: number // 本周分享次数
 }
 
-// 分享API响应
+/**
+ * 分享API响应
+ * 生成分享图片后的API响应数据
+ */
 export interface ShareImageGenerateResponse {
   imageUrl: string // 生成的图片URL
   shareId: string // 分享记录ID

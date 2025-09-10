@@ -1,8 +1,12 @@
 /**
  * 运动记录相关类型定义
+ * 包含运动记录、运动类型、验证规则等相关接口和枚举
  */
 
-// 运动类型枚举
+/**
+ * 运动类型枚举
+ * 定义支持的运动类型
+ */
 export enum SportType {
   RUNNING = 'running',
   CYCLING = 'cycling',
@@ -16,7 +20,10 @@ export enum SportType {
   OTHER = 'other'
 }
 
-// 运动类型显示名称
+/**
+ * 运动类型显示名称
+ * 运动类型对应的中文显示名称
+ */
 export const SportTypeLabels: Record<SportType, string> = {
   [SportType.RUNNING]: '跑步',
   [SportType.CYCLING]: '骑行',
@@ -30,7 +37,10 @@ export const SportTypeLabels: Record<SportType, string> = {
   [SportType.OTHER]: '其他'
 }
 
-// 运动类型图标
+/**
+ * 运动类型图标
+ * 运动类型对应的emoji图标
+ */
 export const SportTypeIcons: Record<SportType, string> = {
   [SportType.RUNNING]: '🏃‍♂️',
   [SportType.CYCLING]: '🚴‍♂️',
@@ -44,7 +54,10 @@ export const SportTypeIcons: Record<SportType, string> = {
   [SportType.OTHER]: '🏃‍♂️'
 }
 
-// 运动记录基础数据
+/**
+ * 运动记录基础数据
+ * 运动记录的核心数据字段
+ */
 export interface SportRecordData {
   duration: number // 运动时长（分钟）
   distance?: number // 运动距离（公里）
@@ -53,7 +66,10 @@ export interface SportRecordData {
   steps?: number // 步数（可选）
 }
 
-// 地理位置信息
+/**
+ * 地理位置信息
+ * 存储运动记录的地理位置相关数据
+ */
 export interface LocationInfo {
   latitude: number // 纬度
   longitude: number // 经度
@@ -62,7 +78,10 @@ export interface LocationInfo {
   district?: string // 区域
 }
 
-// 运动记录
+/**
+ * 运动记录
+ * 完整的运动记录数据结构，包含用户运动的所有信息
+ */
 export interface SportRecord {
   _id?: string // 数据库ID
   openid: string // 用户openid
@@ -76,7 +95,10 @@ export interface SportRecord {
   isDeleted?: boolean // 软删除标记
 }
 
-// 运动记录表单数据
+/**
+ * 运动记录表单数据
+ * 用于表单提交的运动记录数据格式
+ */
 export interface SportRecordFormData {
   sportType: SportType
   duration: string
@@ -89,7 +111,10 @@ export interface SportRecordFormData {
   location?: LocationInfo
 }
 
-// 运动记录列表项
+/**
+ * 运动记录列表项
+ * 用于列表展示的运动记录简化数据结构
+ */
 export interface SportRecordListItem {
   _id: string
   sportType: SportType
@@ -101,7 +126,11 @@ export interface SportRecordListItem {
   relativeTime: string // 相对时间（如"2小时前"）
 }
 
-// 分页数据
+/**
+ * 分页数据
+ * 通用分页数据结构，包含列表数据和分页信息
+ * @template T 列表项的数据类型
+ */
 export interface PaginatedData<T> {
   list: T[]
   total: number
@@ -110,7 +139,10 @@ export interface PaginatedData<T> {
   hasMore: boolean
 }
 
-// 运动记录查询参数
+/**
+ * 运动记录查询参数
+ * 用于运动记录列表查询的筛选条件
+ */
 export interface SportRecordQuery {
   page?: number
   pageSize?: number
@@ -120,7 +152,10 @@ export interface SportRecordQuery {
   keyword?: string
 }
 
-// 验证规则
+/**
+ * 验证规则
+ * 表单字段的验证规则配置
+ */
 export interface ValidationRule {
   min?: number
   max?: number
@@ -129,7 +164,10 @@ export interface ValidationRule {
   message: string
 }
 
-// 运动数据验证规则
+/**
+ * 运动数据验证规则
+ * 运动记录各字段的验证规则配置
+ */
 export const SportDataValidationRules = {
   duration: {
     min: 1,
@@ -168,7 +206,10 @@ export const SportDataValidationRules = {
   }
 } as const
 
-// 图片上传配置
+/**
+ * 图片上传配置
+ * 运动记录图片上传的限制配置
+ */
 export const ImageUploadConfig = {
   maxCount: 9,
   maxSize: 2 * 1024 * 1024, // 2MB
@@ -176,18 +217,29 @@ export const ImageUploadConfig = {
   acceptTypesText: 'JPG、JPEG、PNG'
 } as const
 
-// API响应类型
-export interface ApiResponse<T = any> {
+/**
+ * API响应类型
+ * 通用API响应数据结构
+ * @template T 响应数据的类型，默认为任意类型
+ */
+export interface ApiResponse<T = any> = {
   code: number
   message: string
   data: T
   success: boolean
 }
 
-// 分页API响应
+/**
+ * 分页API响应
+ * 分页数据的API响应格式
+ * @template T 分页数据的类型
+ */
 export interface PaginatedApiResponse<T> extends ApiResponse<PaginatedData<T>> {}
 
-// 创建运动记录API参数
+/**
+ * 创建运动记录API参数
+ * 创建运动记录时需要的参数数据结构
+ */
 export interface CreateSportRecordParams {
   sportType: SportType
   data: SportRecordData
@@ -196,7 +248,11 @@ export interface CreateSportRecordParams {
   location?: LocationInfo
 }
 
-// 更新运动记录API参数
+/**
+ * 更新运动记录API参数
+ * 更新运动记录时需要的参数数据结构
+ * 继承创建参数的所有字段，但都是可选的
+ */
 export interface UpdateSportRecordParams extends Partial<CreateSportRecordParams> {
   id: string
 }

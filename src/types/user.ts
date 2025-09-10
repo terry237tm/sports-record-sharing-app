@@ -1,8 +1,12 @@
 /**
  * 用户相关类型定义
+ * 包含用户信息、设置、统计、成就等相关接口和枚举
  */
 
-// 用户基础信息
+/**
+ * 用户基础信息
+ * 用户的核心基本信息，主要用于展示和用户识别
+ */
 export interface UserInfo {
   openid: string // 用户唯一标识
   nickname: string // 用户昵称
@@ -14,7 +18,10 @@ export interface UserInfo {
   language?: string // 语言
 }
 
-// 微信用户信息（从微信API获取）
+/**
+ * 微信用户信息（从微信API获取）
+ * 微信用户信息的原始数据结构
+ */
 export interface WechatUserInfo {
   nickName: string
   avatarUrl: string
@@ -25,7 +32,10 @@ export interface WechatUserInfo {
   language: string
 }
 
-// 用户配置
+/**
+ * 用户配置
+ * 用户的个性化设置和偏好配置
+ */
 export interface UserSettings {
   theme: 'light' | 'dark' | 'auto' // 主题设置
   language: 'zh-CN' | 'en-US' // 语言设置
@@ -44,7 +54,10 @@ export interface UserSettings {
   }
 }
 
-// 用户统计数据
+/**
+ * 用户统计数据
+ * 用户的运动数据统计信息
+ */
 export interface UserStatistics {
   totalRecords: number // 总运动记录数
   totalDuration: number // 总运动时长（分钟）
@@ -57,7 +70,10 @@ export interface UserStatistics {
   favoriteSportType: string // 最喜欢的运动类型
 }
 
-// 用户成就
+/**
+ * 用户成就
+ * 用户获得的成就信息
+ */
 export interface UserAchievement {
   id: string // 成就ID
   title: string // 成就标题
@@ -73,7 +89,10 @@ export interface UserAchievement {
   }
 }
 
-// 用户等级
+/**
+ * 用户等级
+ * 用户的等级和经验值信息
+ */
 export interface UserLevel {
   currentLevel: number // 当前等级
   currentExp: number // 当前经验值
@@ -83,7 +102,10 @@ export interface UserLevel {
   levelIcon: string // 等级图标
 }
 
-// 用户会话
+/**
+ * 用户会话
+ * 用户登录会话信息
+ */
 export interface UserSession {
   openid: string
   sessionKey: string
@@ -93,7 +115,10 @@ export interface UserSession {
   lastActiveTime: number
 }
 
-// 用户登录响应
+/**
+ * 用户登录响应
+ * 用户登录API的响应数据结构
+ */
 export interface LoginResponse {
   success: boolean
   userInfo: UserInfo
@@ -103,14 +128,20 @@ export interface LoginResponse {
   isNewUser: boolean // 是否新用户
 }
 
-// 用户更新参数
+/**
+ * 用户更新参数
+ * 更新用户信息时需要的参数
+ */
 export interface UpdateUserParams {
   nickname?: string
   avatar?: string
   settings?: Partial<UserSettings>
 }
 
-// 用户查询参数
+/**
+ * 用户查询参数
+ * 查询用户列表时的筛选条件
+ */
 export interface UserQueryParams {
   openid?: string
   keyword?: string // 搜索关键词
@@ -118,7 +149,10 @@ export interface UserQueryParams {
   pageSize?: number
 }
 
-// 默认用户设置
+/**
+ * 默认用户设置
+ * 用户注册时的默认配置设置
+ */
 export const DefaultUserSettings: UserSettings = {
   theme: 'auto',
   language: 'zh-CN',
@@ -137,7 +171,10 @@ export const DefaultUserSettings: UserSettings = {
   }
 } as const
 
-// 用户权限
+/**
+ * 用户权限
+ * 定义用户可执行的操作权限
+ */
 export enum UserPermission {
   CREATE_RECORD = 'create_record', // 创建记录
   UPDATE_RECORD = 'update_record', // 更新记录
@@ -147,7 +184,10 @@ export enum UserPermission {
   MANAGE_SETTINGS = 'manage_settings' // 管理设置
 }
 
-// 用户状态
+/**
+ * 用户状态
+ * 用户账户的当前状态
+ */
 export enum UserStatus {
   ACTIVE = 'active', // 活跃
   INACTIVE = 'inactive', // 非活跃
@@ -155,7 +195,10 @@ export enum UserStatus {
   DELETED = 'deleted' // 已删除
 }
 
-// 用户设备信息
+/**
+ * 用户设备信息
+ * 用户当前使用的设备信息
+ */
 export interface UserDevice {
   platform: 'weapp' | 'h5' | 'rn' // 平台
   system: string // 系统信息
@@ -166,7 +209,10 @@ export interface UserDevice {
   pixelRatio: number // 像素比
 }
 
-// 用户行为日志
+/**
+ * 用户行为日志
+ * 记录用户的关键操作行为
+ */
 export interface UserBehaviorLog {
   id: string
   openid: string
@@ -178,7 +224,10 @@ export interface UserBehaviorLog {
   duration?: number // 行为持续时间（毫秒）
 }
 
-// 用户反馈
+/**
+ * 用户反馈
+ * 用户提交的问题反馈和建议
+ */
 export interface UserFeedback {
   id: string
   openid: string
@@ -191,7 +240,10 @@ export interface UserFeedback {
   updatedAt: string // 更新时间
 }
 
-// 用户收藏
+/**
+ * 用户收藏
+ * 用户收藏的内容信息
+ */
 export interface UserFavorite {
   id: string
   openid: string
@@ -200,7 +252,10 @@ export interface UserFavorite {
   createdAt: string // 收藏时间
 }
 
-// 用户消息
+/**
+ * 用户消息
+ * 系统发送给用户的消息通知
+ */
 export interface UserMessage {
   id: string
   openid: string
