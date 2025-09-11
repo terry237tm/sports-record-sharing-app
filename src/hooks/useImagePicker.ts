@@ -191,10 +191,14 @@ async function compressSingleImage(
       // H5平台：更新File对象和URL
       imageItem.file = compressionResult.file
       imageItem.url = URL.createObjectURL(compressionResult.file)
-    } else {
-      // 微信小程序：更新临时文件路径
-      imageItem.tempFilePath = '' // 需要重新获取路径
-      imageItem.url = '' // 需要重新生成URL
+    } else if (compressionResult.file instanceof Blob) {
+      // 微信小程序压缩后返回的是Blob，需要创建新的临时文件
+      // 注意：这里需要处理微信小程序的特殊情况
+      if (imageItem.tempFilePath) {
+        // 保持原有的临时文件路径，因为压缩函数内部已经处理了文件转换
+        // 压缩后的blob可以用于上传，但预览URL保持不变
+        imageItem.url = imageItem.tempFilePath
+      }
     }
     
     return imageItem

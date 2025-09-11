@@ -96,9 +96,26 @@ export async function getImageFileInfo(filePath: string): Promise<{
 }> {
   try {
     const fileInfo = await Taro.getFileInfo({ filePath })
+    
+    // 通过微信小程序API获取图片信息来确定格式
+    let imageType = 'image/jpeg' // 默认格式
+    try {
+      const imageInfo = await Taro.getImageInfo({ src: filePath })
+      // 根据图片信息推断格式，如果type字段存在则使用，否则根据路径推断
+      if (imageInfo.type) {
+        imageType = `image/${imageInfo.type}`
+      } else if (filePath.toLowerCase().includes('.png')) {
+        imageType = 'image/png'
+      } else if (filePath.toLowerCase().includes('.jpg') || filePath.toLowerCase().includes('.jpeg')) {
+        imageType = 'image/jpeg'
+      }
+    } catch {
+      // 如果获取图片信息失败，继续使用默认格式
+    }
+    
     return {
       size: fileInfo.size,
-      type: 'image/jpeg' // 微信小程序默认返回jpeg格式
+      type: imageType
     }
   } catch (error) {
     throw new Error(`获取文件信息失败: ${error}`)
@@ -148,6 +165,7 @@ export async function validateImageFile(
     maxSize?: number
     maxWidth?: number
     maxHeight?: number
+    skipDimensionCheck?: boolean // 是否跳过尺寸检查（用于性能优化）
   }
 ): Promise<ImageValidationResult> {
   // 验证格式
@@ -162,13 +180,29 @@ export async function validateImageFile(
     return sizeResult
   }
   
+  // 如果跳过尺寸检查，直接返回成功
+  if (options?.skipDimensionCheck) {
+    return { valid: true }
+  }
+  
   // 验证尺寸（如果可能）
   try {
     const img = new Image()
     const objectUrl = URL.createObjectURL(file)
     
     return new Promise((resolve) => {
+      // 设置超时，防止大尺寸图片加载过慢
+      const timeoutId = setTimeout(() => {
+        URL.revokeObjectURL(objectUrl)
+        resolve({ 
+          valid: false, 
+          error: '图片加载超时，请检查文件是否过大或损坏',
+          warning: '建议压缩图片后再上传'
+        })
+      }, 10000) // 10秒超时
+      
       img.onload = () => {
+        clearTimeout(timeoutId)
         URL.revokeObjectURL(objectUrl)
         const dimensionResult = validateImageDimensions(
           img.width,
@@ -180,6 +214,7 @@ export async function validateImageFile(
       }
       
       img.onerror = () => {
+        clearTimeout(timeoutId)
         URL.revokeObjectURL(objectUrl)
         resolve({ 
           valid: false, 
@@ -209,12 +244,33 @@ export async function validateWechatImage(
     maxSize?: number
     maxWidth?: number
     maxHeight?: number
+    skipDimensionCheck?: boolean // 是否跳过尺寸检查（用于性能优化）
   }
 ): Promise<ImageValidationResult> {
   try {
+    // 验证文件路径
+    if (!tempFilePath || typeof tempFilePath !== 'string') {
+      return {
+        valid: false,
+        error: '无效的文件路径'
+      }
+    }
+    
+    // 验证文件是否存在
+    try {
+      await Taro.getFileSystemManager().access({
+        path: tempFilePath
+      })
+    } catch {
+      return {
+        valid: false,
+        error: '文件不存在或无法访问'
+      }
+    }
+    
     const fileInfo = await getImageFileInfo(tempFilePath)
     
-    // 验证格式（微信小程序默认jpeg）
+    // 验证格式
     const formatResult = validateImageFormat(fileInfo.type)
     if (!formatResult.valid) {
       return formatResult
@@ -226,7 +282,27 @@ export async function validateWechatImage(
       return sizeResult
     }
     
-    return { valid: true }
+    // 如果跳过尺寸检查，直接返回成功
+    if (options?.skipDimensionCheck) {
+      return { valid: true }
+    }
+    
+    // 验证尺寸（微信小程序）
+    try {
+      const imageInfo = await Taro.getImageInfo({ src: tempFilePath })
+      const dimensionResult = validateImageDimensions(
+        imageInfo.width,
+        imageInfo.height,
+        options?.maxWidth,
+        options?.maxHeight
+      )
+      return dimensionResult
+    } catch (error) {
+      return {
+        valid: false,
+        error: `无法获取图片尺寸信息: ${error}`
+      }
+    }
   } catch (error) {
     return {
       valid: false,

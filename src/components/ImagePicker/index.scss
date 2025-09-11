@@ -132,6 +132,12 @@
   line-height: 1.2;
 }
 
+.compression-ratio {
+  font-size: $font-size-xs;
+  color: $color-success;
+  margin-top: 2px;
+}
+
 // 删除按钮
 .remove-btn {
   position: absolute;

@@ -4,7 +4,7 @@
  * 支持微信小程序和H5双平台
  */
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { View, Text, Image, Button, Canvas } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import useImagePicker, { ImageItem, UseImagePickerOptions } from '@/hooks/useImagePicker'
@@ -50,20 +50,43 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
     compressImages,
     clearImages
   } = useImagePicker(options)
+  
+  const isControlled = value !== undefined
+  const displayImages = isControlled ? value : images
+  const blobUrlsRef = useRef<Set<string>>(new Set())
 
-  // 同步外部value值
+  // 组件卸载时清理blob URL
   useEffect(() => {
-    if (value && value !== images) {
-      // 这里需要实现同步逻辑，由于hook内部管理状态，可能需要调整架构
+    return () => {
+      // 清理所有blob URL
+      blobUrlsRef.current.forEach(url => {
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url)
+        }
+      })
+      blobUrlsRef.current.clear()
     }
-  }, [value, images])
+  }, [])
+
+  // 同步外部value值到内部状态
+  useEffect(() => {
+    if (isControlled && value) {
+      // 清理旧的blob URL
+      blobUrlsRef.current.forEach(url => {
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url)
+          blobUrlsRef.current.delete(url)
+        }
+      })
+    }
+  }, [isControlled, value])
 
   // 同步内部状态到外部
   useEffect(() => {
     if (onChange && images !== value) {
       onChange(images)
     }
-  }, [images, onChange, value])
+  }, [images, onChange, value, isControlled])
 
   /**
    * 渲染图片项
@@ -90,7 +113,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
           {isError && (
             <View className="error-indicator">
               <Text className="error-icon">⚠️</Text>
-              <Text className="error-text">{image.error}</Text>
+              <Text className="error-text">{image.error || '图片处理失败'}</Text>
             </View>
           )}
           
@@ -104,6 +127,9 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
             <View className="compression-info">
               <Text className="size-info">
                 {(image.originalSize / 1024 / 1024).toFixed(1)}MB → {(image.compressedSize / 1024 / 1024).toFixed(1)}MB
+              </Text>
+              <Text className="compression-ratio">
+                ({Math.round(((image.originalSize - image.compressedSize) / image.originalSize) * 100)}%)
               </Text>
             </View>
           )}
@@ -166,7 +192,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
       return
     }
 
-    const validImages = images.filter(img => img.status !== 'error')
+    const validImages = displayImages.filter(img => img.status !== 'error')
     const urls = validImages.map(img => img.url)
     const previewIndex = validImages.findIndex(img => img.id === image.id)
 
@@ -194,7 +220,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
       return '处理中...'
     }
     
-    const pendingCount = images.filter(img => img.status === 'pending').length
+    const pendingCount = displayImages.filter(img => img.status === 'pending').length
     if (pendingCount > 0) {
       return `压缩 ${pendingCount} 张图片`
     }
@@ -203,9 +229,9 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
   }
 
   const maxCount = options.maxCount || ImageUploadConfig.maxCount
-  const canAddMore = images.length < maxCount
-  const hasPendingImages = images.some(img => img.status === 'pending')
-  const errorCount = images.filter(img => img.status === 'error').length
+  const canAddMore = displayImages.length < maxCount
+  const hasPendingImages = displayImages.some(img => img.status === 'pending')
+  const errorCount = displayImages.filter(img => img.status === 'error').length
 
   return (
     <View className={`image-picker ${className}`} style={style}>
@@ -213,7 +239,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
       <View className="picker-header">
         <Text className="picker-title">运动照片</Text>
         <Text className="picker-count">
-          {images.length}/{maxCount}
+          {displayImages.length}/{maxCount}
           {errorCount > 0 && (
             <Text className="error-count"> ({errorCount}张错误)</Text>
           )}
@@ -222,7 +248,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 
       {/* 图片网格 */}
       <View className="image-grid">
-        {images.map((image, index) => renderImageItem(image, index))}
+        {displayImages.map((image, index) => renderImageItem(image, index))}
         
         {/* 添加按钮 */}
         {canAddMore && !disabled && (

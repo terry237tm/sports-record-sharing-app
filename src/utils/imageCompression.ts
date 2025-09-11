@@ -100,6 +100,28 @@ async function compressWithCanvas(
 ): Promise<CompressionResult> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
+    let canvas: HTMLCanvasElement | null = null
+    let objectUrl: string | null = null
+    
+    // 清理函数
+    const cleanup = () => {
+      if (canvas) {
+        // 清理Canvas上下文
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+        }
+        // 移除Canvas元素
+        if (canvas.parentNode) {
+          canvas.parentNode.removeChild(canvas)
+        }
+        canvas = null
+      }
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl)
+        objectUrl = null
+      }
+    }
     
     reader.onload = async (e) => {
       try {
@@ -116,15 +138,20 @@ async function compressWithCanvas(
             )
             
             // 创建Canvas
-            const canvas = document.createElement('canvas')
+            canvas = document.createElement('canvas')
             const ctx = canvas.getContext('2d')
             
             if (!ctx) {
+              cleanup()
               throw new Error('无法创建Canvas上下文')
             }
             
             canvas.width = scaled.width
             canvas.height = scaled.height
+            
+            // 设置图片质量增强
+            ctx.imageSmoothingEnabled = true
+            ctx.imageSmoothingQuality = 'high'
             
             // 绘制图片
             ctx.drawImage(img, 0, 0, scaled.width, scaled.height)
@@ -133,6 +160,7 @@ async function compressWithCanvas(
             canvas.toBlob(
               (blob) => {
                 if (!blob) {
+                  cleanup()
                   reject(new Error('图片压缩失败'))
                   return
                 }
@@ -141,8 +169,9 @@ async function compressWithCanvas(
                 if (blob.size > config.maxSize) {
                   // 降低质量重新压缩
                   const newQuality = Math.max(0.1, config.quality - 0.1)
-                  canvas.toBlob(
+                  canvas!.toBlob(
                     (newBlob) => {
+                      cleanup()
                       if (!newBlob) {
                         reject(new Error('图片压缩失败'))
                         return
@@ -161,6 +190,7 @@ async function compressWithCanvas(
                     newQuality
                   )
                 } else {
+                  cleanup()
                   resolve({
                     file: blob,
                     originalSize: file.size,
@@ -175,21 +205,26 @@ async function compressWithCanvas(
               config.quality
             )
           } catch (error) {
+            cleanup()
             reject(error)
           }
         }
         
         img.onerror = () => {
+          cleanup()
           reject(new Error('无法加载图片'))
         }
         
-        img.src = e.target?.result as string
+        objectUrl = e.target?.result as string
+        img.src = objectUrl
       } catch (error) {
+        cleanup()
         reject(error)
       }
     }
     
     reader.onerror = () => {
+      cleanup()
       reject(new Error('无法读取文件'))
     }
     
@@ -205,6 +240,23 @@ async function compressWechatImage(
   config: CompressionConfig
 ): Promise<CompressionResult> {
   try {
+    // 验证文件路径
+    if (!tempFilePath || typeof tempFilePath !== 'string') {
+      throw new Error('无效的文件路径')
+    }
+    
+    // 验证文件是否存在
+    try {
+      await Taro.getFileSystemManager().access({
+        path: tempFilePath
+      })
+    } catch {
+      throw new Error('文件不存在或无法访问')
+    }
+    
+    // 获取原始文件信息
+    const originalFileInfo = await Taro.getFileInfo({ filePath: tempFilePath })
+    
     // 获取图片信息
     const imageInfo = await Taro.getImageInfo({ src: tempFilePath })
     
@@ -216,13 +268,35 @@ async function compressWechatImage(
       config.maxHeight
     )
     
+    // 如果图片已经在限制范围内，直接返回原始文件
+    if (imageInfo.width <= config.maxWidth && 
+        imageInfo.height <= config.maxHeight && 
+        originalFileInfo.size <= config.maxSize) {
+      
+      // 转换为File对象
+      const base64 = await Taro.getFileSystemManager().readFile({
+        filePath: tempFilePath,
+        encoding: 'base64'
+      })
+      
+      const blob = base64ToBlob(base64.data, `image/${config.format}`)
+      return {
+        file: blob,
+        originalSize: originalFileInfo.size,
+        compressedSize: originalFileInfo.size,
+        compressionRatio: 0,
+        width: imageInfo.width,
+        height: imageInfo.height
+      }
+    }
+    
     // 使用Canvas进行压缩
     return new Promise((resolve, reject) => {
       const query = Taro.createSelectorQuery()
       
       query.select('#compress-canvas')
         .fields({ node: true, size: true })
-        .exec((res) => {
+        .exec(async (res) => {
           if (!res[0]) {
             reject(new Error('无法获取Canvas节点'))
             return
@@ -234,6 +308,9 @@ async function compressWechatImage(
           canvas.width = scaled.width
           canvas.height = scaled.height
           
+          // 设置图片质量
+          ctx.imageSmoothingEnabled = true
+          
           const img = canvas.createImage()
           
           img.onload = () => {
@@ -244,43 +321,80 @@ async function compressWechatImage(
               canvas,
               fileType: config.format,
               quality: config.quality,
-              success: (result) => {
-                // 获取压缩后的文件信息
-                Taro.getFileInfo({
-                  filePath: result.tempFilePath,
-                  success: (fileInfo) => {
-                    // 如果仍然超过大小限制，继续压缩
-                    if (fileInfo.size > config.maxSize) {
-                      // 递归压缩，降低质量
-                      const newConfig = {
-                        ...config,
-                        quality: Math.max(0.1, config.quality - 0.1)
+              success: async (result) => {
+                try {
+                  // 获取压缩后的文件信息
+                  const compressedFileInfo = await Taro.getFileInfo({
+                    filePath: result.tempFilePath
+                  })
+                  
+                  // 如果仍然超过大小限制，继续压缩
+                  if (compressedFileInfo.size > config.maxSize) {
+                    // 递归压缩，降低质量
+                    const newConfig = {
+                      ...config,
+                      quality: Math.max(0.1, config.quality - 0.1)
+                    }
+                    
+                    // 避免无限递归，设置最小质量限制
+                    if (newConfig.quality >= 0.1) {
+                      try {
+                        const recursiveResult = await compressWechatImage(tempFilePath, newConfig)
+                        resolve(recursiveResult)
+                      } catch (recursiveError) {
+                        // 如果递归压缩失败，使用当前结果
+                        const base64 = await Taro.getFileSystemManager().readFile({
+                          filePath: result.tempFilePath,
+                          encoding: 'base64'
+                        })
+                        
+                        const blob = base64ToBlob(base64.data, `image/${config.format}`)
+                        resolve({
+                          file: blob,
+                          originalSize: originalFileInfo.size,
+                          compressedSize: compressedFileInfo.size,
+                          compressionRatio: (originalFileInfo.size - compressedFileInfo.size) / originalFileInfo.size,
+                          width: scaled.width,
+                          height: scaled.height
+                        })
                       }
-                      compressWechatImage(tempFilePath, newConfig)
-                        .then(resolve)
-                        .catch(reject)
                     } else {
-                      // 转换为File对象
-                      Taro.getFileSystemManager().readFile({
+                      // 质量已经最低，返回当前结果
+                      const base64 = await Taro.getFileSystemManager().readFile({
                         filePath: result.tempFilePath,
-                        encoding: 'base64',
-                        success: (base64) => {
-                          const blob = base64ToBlob(base64.data, `image/${config.format}`)
-                          resolve({
-                            file: blob,
-                            originalSize: fileInfo.size, // 这里用压缩后的大小作为原始大小
-                            compressedSize: fileInfo.size,
-                            compressionRatio: 0,
-                            width: scaled.width,
-                            height: scaled.height
-                          })
-                        },
-                        fail: reject
+                        encoding: 'base64'
+                      })
+                      
+                      const blob = base64ToBlob(base64.data, `image/${config.format}`)
+                      resolve({
+                        file: blob,
+                        originalSize: originalFileInfo.size,
+                        compressedSize: compressedFileInfo.size,
+                        compressionRatio: (originalFileInfo.size - compressedFileInfo.size) / originalFileInfo.size,
+                        width: scaled.width,
+                        height: scaled.height
                       })
                     }
-                  },
-                  fail: reject
-                })
+                  } else {
+                    // 转换为File对象
+                    const base64 = await Taro.getFileSystemManager().readFile({
+                      filePath: result.tempFilePath,
+                      encoding: 'base64'
+                    })
+                    
+                    const blob = base64ToBlob(base64.data, `image/${config.format}`)
+                    resolve({
+                      file: blob,
+                      originalSize: originalFileInfo.size,
+                      compressedSize: compressedFileInfo.size,
+                      compressionRatio: (originalFileInfo.size - compressedFileInfo.size) / originalFileInfo.size,
+                      width: scaled.width,
+                      height: scaled.height
+                    })
+                  }
+                } catch (error) {
+                  reject(error)
+                }
               },
               fail: reject
             })
