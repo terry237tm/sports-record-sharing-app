@@ -1,0 +1,320 @@
+/**
+ * ImagePicker 样式
+ * 图片选择器组件样式定义
+ */
+
+@import '@/styles/variables.scss';
+
+.image-picker {
+  width: 100%;
+  padding: $spacing-md;
+  background-color: $bg-color;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-sm;
+}
+
+// 头部
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.picker-title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  color: $text-primary;
+}
+
+.picker-count {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.error-count {
+  color: $color-error;
+  margin-left: $spacing-xs;
+}
+
+// 图片网格
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.image-item {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%; // 1:1 宽高比
+  border-radius: $border-radius-md;
+  overflow: hidden;
+  background-color: $bg-color-secondary;
+  border: 1px solid $border-color;
+  
+  &.error {
+    border-color: $color-error;
+    background-color: rgba($color-error, 0.1);
+  }
+  
+  &.compressing {
+    opacity: 0.7;
+  }
+}
+
+.image-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// 状态指示器
+.image-status {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.error-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  text-align: center;
+  padding: $spacing-sm;
+}
+
+.error-icon {
+  font-size: 24px;
+  margin-bottom: $spacing-xs;
+}
+
+.error-text {
+  font-size: $font-size-xs;
+  line-height: 1.2;
+}
+
+.compressing-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.compressing-text {
+  font-size: $font-size-sm;
+}
+
+.compression-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: $spacing-xs;
+  text-align: center;
+}
+
+.size-info {
+  font-size: $font-size-xs;
+  line-height: 1.2;
+}
+
+// 删除按钮
+.remove-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  
+  &:active {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+}
+
+.remove-icon {
+  color: white;
+  font-size: 16px;
+  line-height: 1;
+}
+
+// 添加按钮
+.add-btn {
+  width: 100%;
+  padding-bottom: 100%; // 1:1 宽高比
+  border: 2px dashed $border-color;
+  border-radius: $border-radius-md;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: $bg-color-secondary;
+  cursor: pointer;
+  position: relative;
+  
+  &:active {
+    background-color: rgba($color-primary, 0.1);
+    border-color: $color-primary;
+  }
+  
+  &.loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+.add-icon {
+  font-size: 32px;
+  color: $text-secondary;
+  margin-bottom: $spacing-xs;
+}
+
+.add-text {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  text-align: center;
+}
+
+// 操作按钮
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $spacing-md;
+}
+
+// 底部提示
+.picker-footer {
+  text-align: center;
+}
+
+.picker-hint {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  line-height: 1.4;
+}
+
+.auto-compress-hint {
+  display: block;
+  font-size: $font-size-xs;
+  color: $color-success;
+  margin-top: $spacing-xs;
+}
+
+// 响应式设计
+@media (max-width: $screen-sm) {
+  .image-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-xs;
+  }
+}
+
+// 暗色主题支持
+@media (prefers-color-scheme: dark) {
+  .image-picker {
+    background-color: $bg-color-dark;
+  }
+  
+  .image-item {
+    background-color: $bg-color-secondary-dark;
+    border-color: $border-color-dark;
+  }
+  
+  .add-btn {
+    background-color: $bg-color-secondary-dark;
+    border-color: $border-color-dark;
+  }
+}
+
+// 加载动画
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.compressing {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+// 微信小程序特殊样式
+.taro-weapp .image-grid {
+  // 微信小程序下的特殊样式调整
+  gap: $spacing-xs;
+}
+
+.taro-weapp .add-btn {
+  // 微信小程序下的按钮样式调整
+  border-width: 1px;
+}
+
+// H5平台特殊样式
+.taro-h5 .image-preview {
+  // H5平台下的图片预览样式
+  cursor: pointer;
+  
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.taro-h5 .add-btn {
+  // H5平台下的添加按钮悬停效果
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: $color-primary;
+    background-color: rgba($color-primary, 0.05);
+  }
+}
+
+// 可访问性增强
+.image-item:focus,
+.add-btn:focus {
+  outline: 2px solid $color-primary;
+  outline-offset: 2px;
+}
+
+// 错误状态增强
+.image-item.error {
+  .image-status {
+    background-color: rgba($color-error, 0.8);
+  }
+}
+
+// 压缩状态增强
+.image-item.compressing {
+  .image-status {
+    background-color: rgba($color-warning, 0.8);
+  }
+}
+
+// 成功状态
+.image-item.compressed {
+  border-color: $color-success;
+  box-shadow: 0 0 0 2px rgba($color-success, 0.2);
+}

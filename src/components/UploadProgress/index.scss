@@ -1,0 +1,372 @@
+/**
+ * 上传进度组件样式
+ */
+
+.upload-progress {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  // 总体进度
+  .overall-progress {
+    margin-bottom: 16px;
+    
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      
+      .progress-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: #333;
+      }
+      
+      .progress-count {
+        font-size: 14px;
+        color: #666;
+      }
+    }
+    
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #999;
+      
+      .speed {
+        color: #1890ff;
+      }
+      
+      .time {
+        color: #666;
+      }
+    }
+  }
+  
+  // 单个任务进度
+  .individual-progress {
+    margin-bottom: 16px;
+    
+    .section-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 12px;
+      display: block;
+    }
+    
+    .task-item {
+      margin-bottom: 12px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      .task-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        
+        .task-icon {
+          font-size: 16px;
+          margin-right: 8px;
+          width: 20px;
+          text-align: center;
+        }
+        
+        .task-info {
+          flex: 1;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          
+          .task-name {
+            font-size: 14px;
+            font-weight: 500;
+          }
+          
+          .task-progress {
+            font-size: 12px;
+            color: #666;
+          }
+        }
+        
+        .task-actions {
+          display: flex;
+          gap: 8px;
+          
+          .taro-button {
+            margin: 0;
+            padding: 2px 8px;
+            font-size: 12px;
+            min-width: auto;
+          }
+        }
+      }
+      
+      .task-error {
+        font-size: 12px;
+        color: #ff4d4f;
+        margin-top: 4px;
+        word-break: break-all;
+      }
+    }
+  }
+  
+  // 队列项目
+  .queue-progress {
+    margin-bottom: 16px;
+    
+    .section-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 12px;
+      display: block;
+    }
+    
+    .queue-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      .queue-icon {
+        font-size: 14px;
+        margin-right: 8px;
+        width: 16px;
+        text-align: center;
+        color: #999;
+      }
+      
+      .queue-name {
+        flex: 1;
+        font-size: 14px;
+        color: #666;
+      }
+      
+      .queue-attempts {
+        font-size: 12px;
+        color: #999;
+      }
+    }
+  }
+  
+  // 操作按钮
+  .progress-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+    
+    .taro-button {
+      margin: 0;
+    }
+  }
+}
+
+// 紧凑模式
+.upload-progress-compact {
+  padding: 8px;
+  background: #fff;
+  border-radius: 4px;
+  
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    
+    .progress-text {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .progress-percent {
+      font-size: 12px;
+      color: #1890ff;
+      font-weight: 500;
+    }
+  }
+  
+  .taro-progress {
+    margin: 0;
+  }
+}
+
+// 圆形进度组件
+.circular-progress {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  .circular-progress-svg {
+    transform: rotate(-90deg);
+  }
+  
+  .circular-progress-background {
+    transition: stroke-dashoffset 0.3s ease;
+  }
+  
+  .circular-progress-bar {
+    transition: stroke-dashoffset 0.3s ease;
+  }
+  
+  .circular-progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+// 响应式设计
+@media (max-width: 375px) {
+  .upload-progress {
+    padding: 12px;
+    margin: 12px 0;
+    
+    .overall-progress .progress-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    
+    .task-item .task-header {
+      flex-wrap: wrap;
+      
+      .task-actions {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 8px;
+      }
+    }
+  }
+}
+
+// 深色模式支持
+@media (prefers-color-scheme: dark) {
+  .upload-progress {
+    background: #1a1a1a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    
+    .progress-title,
+    .section-title {
+      color: #e6e6e6;
+    }
+    
+    .progress-count,
+    .task-progress,
+    .queue-name {
+      color: #999;
+    }
+    
+    .task-item {
+      background: #2a2a2a;
+    }
+    
+    .progress-info .speed {
+      color: #40a9ff;
+    }
+  }
+  
+  .upload-progress-compact {
+    background: #1a1a1a;
+    
+    .progress-text,
+    .progress-percent {
+      color: #999;
+    }
+  }
+  
+  .circular-progress-text {
+    color: #e6e6e6;
+  }
+}
+
+// 动画效果
+@keyframes progress-pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.upload-progress .taro-progress-inner {
+  transition: width 0.3s ease;
+}
+
+.upload-progress .task-item.uploading {
+  animation: progress-pulse 2s infinite;
+}
+
+// 加载动画
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.upload-progress .task-icon.spinning {
+  animation: spin 1s linear infinite;
+}
+
+// 成功动画
+@keyframes success-bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: translateY(-2px);
+  }
+}
+
+.upload-progress .task-icon.success {
+  animation: success-bounce 0.6s ease;
+}
+
+// 失败动画
+@keyframes fail-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px);
+  }
+}
+
+.upload-progress .task-icon.failed {
+  animation: fail-shake 0.5s ease;
+}
