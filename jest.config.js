@@ -18,7 +18,7 @@ module.exports = {
     url: 'http://localhost',
     // 启用自定义的全局变量模拟
     customExportConditions: ['node', 'node-addons']
-  }
+  },
   
   // 根目录
   roots: ['<rootDir>/src', '<rootDir>/tests'],
@@ -86,6 +86,7 @@ module.exports = {
     '!src/**/*.stories.{ts,tsx}', // 排除故事文件
     '!src/**/__tests__/**', // 排除测试目录
     '!src/**/mocks/**' // 排除mock目录
+  ],
   
   // 覆盖率阈值 - 设置合理的覆盖率目标
   coverageThreshold: {
@@ -115,22 +116,17 @@ module.exports = {
   
   // 详细的覆盖率报告配置
   coverageDirectory: 'coverage',
-  coverageProvider: 'v8' // 使用V8引擎提供更好的覆盖率数据
+  coverageProvider: 'v8', // 使用V8引擎提供更好的覆盖率数据
   
-  // 设置文件
+  // 设置文件 - 支持多环境设置
+  setupFiles: ['<rootDir>/jest.setup.js'], // 基础环境设置
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.ts', '<rootDir>/src/setupTests.ts'], // React和测试库设置
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   
   // 测试超时时间
   testTimeout: 10000,
   
   // 清除全局变量配置（已移至transform配置中）
-  
-  // 模拟模块
-  testPathIgnorePatterns: [
-    '<rootDir>/node_modules/',
-    '<rootDir>/dist/',
-    '<rootDir>/cloud-functions/'
-  ],
   
   // 模拟模块 - 扩展忽略模式
   testPathIgnorePatterns: [
