@@ -1,0 +1,462 @@
+/**
+ * ImagePreview 图片预览组件样式
+ * 支持响应式布局和暗色主题
+ */
+
+// 基础变量
+$preview-border-radius: 8px;
+$preview-transition: all 0.3s ease;
+$preview-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+$preview-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+// 尺寸变量
+$preview-size-small: 80px;
+$preview-size-medium: 120px;
+$preview-size-large: 160px;
+
+// 暗色主题变量
+$dark-bg: #1a1a1a;
+$dark-surface: #2a2a2a;
+$dark-text: #e0e0e0;
+$dark-text-secondary: #999;
+$dark-border: #333;
+$dark-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+$dark-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.4);
+
+// 图片预览组件基础样式
+.image-preview {
+  position: relative;
+  overflow: hidden;
+  background-color: #f5f5f5;
+  border-radius: $preview-border-radius;
+  box-shadow: $preview-shadow;
+  transition: $preview-transition;
+  cursor: default;
+
+  // 尺寸变体
+  &--small {
+    width: $preview-size-small;
+    height: $preview-size-small;
+  }
+
+  &--medium {
+    width: $preview-size-medium;
+    height: $preview-size-medium;
+  }
+
+  &--large {
+    width: $preview-size-large;
+    height: $preview-size-large;
+  }
+
+  // 形状变体
+  &--square {
+    border-radius: $preview-border-radius;
+  }
+
+  &--rounded {
+    border-radius: 12px;
+  }
+
+  &--circle {
+    border-radius: 50%;
+  }
+
+  // 状态变体
+  &--error {
+    background-color: #fff2f0;
+    border: 1px solid #ffccc7;
+  }
+
+  &--compressing {
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  &--clickable {
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $preview-shadow-hover;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// 图片容器
+.image-preview__container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// 图片主体
+.image-preview__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  &--loaded {
+    opacity: 1;
+  }
+
+  &--error {
+    display: none;
+  }
+}
+
+// 加载占位符
+.image-preview__placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fafafa;
+
+  &-icon {
+    font-size: 24px;
+    color: #999;
+    margin-bottom: 4px;
+  }
+
+  &-text {
+    font-size: 12px;
+    color: #999;
+  }
+}
+
+// 错误状态
+.image-preview__error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff2f0;
+
+  &-icon {
+    font-size: 24px;
+    color: #ff4d4f;
+    margin-bottom: 4px;
+  }
+
+  &-text {
+    font-size: 12px;
+    color: #ff4d4f;
+    text-align: center;
+    padding: 0 8px;
+  }
+}
+
+// 状态指示器
+.image-preview__status {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  z-index: 2;
+}
+
+.image-preview__status-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(2px);
+}
+
+.image-preview__status-icon {
+  margin-right: 2px;
+  font-size: 10px;
+}
+
+.image-preview__status-text {
+  font-size: 10px;
+  line-height: 1;
+}
+
+// 压缩信息
+.image-preview__compression {
+  margin-top: 2px;
+  padding: 2px 4px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+  font-size: 9px;
+  color: #666;
+}
+
+.image-preview__compression-ratio {
+  color: #52c41a;
+  font-weight: 500;
+}
+
+.image-preview__compression-size {
+  margin-left: 4px;
+  color: #999;
+}
+
+// 删除按钮
+.image-preview__remove {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ff4d4f;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 3;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+    background-color: #ff7875;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &-icon {
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+  }
+}
+
+// 点击遮罩
+.image-preview__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 1;
+
+  &-text {
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.image-preview--clickable:hover .image-preview__overlay {
+  background-color: rgba(0, 0, 0, 0.3);
+  opacity: 1;
+}
+
+// 图片预览列表
+.image-preview-list {
+  width: 100%;
+}
+
+// 暗色主题支持
+@media (prefers-color-scheme: dark) {
+  .image-preview {
+    background-color: $dark-surface;
+    box-shadow: $dark-shadow;
+
+    &--error {
+      background-color: rgba(255, 77, 79, 0.1);
+      border-color: rgba(255, 122, 117, 0.3);
+    }
+
+    &--clickable:hover {
+      box-shadow: $dark-shadow-hover;
+    }
+  }
+
+  .image-preview__placeholder {
+    background-color: $dark-surface;
+
+    &-icon,
+    &-text {
+      color: $dark-text-secondary;
+    }
+  }
+
+  .image-preview__error {
+    background-color: rgba(255, 77, 79, 0.1);
+
+    &-icon,
+    &-text {
+      color: #ff7875;
+    }
+  }
+
+  .image-preview__compression {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: $dark-text-secondary;
+
+    .image-preview__compression-size {
+      color: $dark-text-secondary;
+    }
+  }
+
+  .image-preview__status-indicator {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+}
+
+// 响应式设计
+@media screen and (max-width: 768px) {
+  .image-preview {
+    &--small {
+      width: 60px;
+      height: 60px;
+    }
+
+    &--medium {
+      width: 90px;
+      height: 90px;
+    }
+
+    &--large {
+      width: 120px;
+      height: 120px;
+    }
+  }
+
+  .image-preview__placeholder-icon {
+    font-size: 20px;
+  }
+
+  .image-preview__placeholder-text {
+    font-size: 10px;
+  }
+
+  .image-preview__error-icon {
+    font-size: 20px;
+  }
+
+  .image-preview__error-text {
+    font-size: 10px;
+  }
+
+  .image-preview__status-indicator {
+    padding: 1px 4px;
+    font-size: 9px;
+  }
+
+  .image-preview__compression {
+    font-size: 8px;
+  }
+}
+
+// 触摸设备优化
+@media (hover: none) and (pointer: coarse) {
+  .image-preview--clickable:active {
+    transform: scale(0.98);
+  }
+
+  .image-preview__overlay {
+    display: none; // 在触摸设备上隐藏悬遮罩
+  }
+
+  .image-preview__remove {
+    width: 24px;
+    height: 24px;
+
+    &-icon {
+      font-size: 14px;
+    }
+  }
+}
+
+// 动画效果
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.image-preview {
+  animation: fadeIn 0.3s ease;
+}
+
+.image-preview--compressing {
+  .image-preview__status-indicator {
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+}
+
+// 高对比度模式支持
+@media (prefers-contrast: high) {
+  .image-preview {
+    border: 1px solid #000;
+  }
+
+  .image-preview--error {
+    border-color: #ff0000;
+  }
+
+  .image-preview__error {
+    background-color: #fff;
+    color: #000;
+  }
+
+  .image-preview__remove {
+    background-color: #000;
+    border: 2px solid #fff;
+  }
+}
+
+// 减少动画偏好
+@media (prefers-reduced-motion: reduce) {
+  .image-preview,
+  .image-preview__image,
+  .image-preview__overlay,
+  .image-preview__remove {
+    transition: none;
+  }
+
+  .image-preview--compressing .image-preview__status-indicator {
+    animation: none;
+  }
+}
