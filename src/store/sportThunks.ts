@@ -160,3 +160,6 @@ export const uploadSportImages = createAsyncThunk(
     }
   }
 )
+
+// 导出云函数调用函数供组件直接使用
+export const uploadImages = uploadSportImages

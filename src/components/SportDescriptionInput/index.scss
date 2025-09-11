@@ -1,0 +1,356 @@
+/**
+ * SportDescriptionInput 组件样式
+ * 运动描述输入组件的布局和交互样式
+ */
+
+.sport-description-input {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .input-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .input-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+
+    .required-mark {
+      color: #f44336;
+      margin-left: 4px;
+      font-size: 14px;
+    }
+  }
+
+  .char-count {
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    // 字数统计状态颜色
+    &.info {
+      color: #2196F3;
+    }
+
+    &.warning {
+      color: #ff9800;
+      font-weight: 600;
+    }
+
+    &.error {
+      color: #f44336;
+      font-weight: 700;
+      animation: pulse 0.5s ease-in-out;
+    }
+  }
+
+  .description-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    background-color: #fff;
+    resize: vertical;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    font-family: inherit;
+
+    &::placeholder {
+      color: #999;
+      font-size: 14px;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #4CAF50;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
+    &:disabled {
+      background-color: #f5f5f5;
+      color: #999;
+      cursor: not-allowed;
+      border-color: #e0e0e0;
+    }
+
+    &:read-only {
+      background-color: #f9f9f9;
+      cursor: default;
+    }
+
+    // 状态样式
+    &.success {
+      border-color: #4CAF50;
+      background-color: #f8fdf8;
+
+      &:focus {
+        border-color: #4CAF50;
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+      }
+    }
+
+    &.error {
+      border-color: #f44336;
+      background-color: #fef8f8;
+
+      &:focus {
+        border-color: #f44336;
+        box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.2);
+      }
+    }
+  }
+
+  .error-message {
+    font-size: 14px;
+    color: #f44336;
+    margin-top: 8px;
+    display: block;
+    font-weight: 500;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .input-footer {
+    margin-top: 8px;
+
+    .input-hint {
+      font-size: 12px;
+      color: #999;
+      font-style: italic;
+    }
+  }
+
+  // 组件状态样式
+  &.success {
+    .input-label {
+      color: #4CAF50;
+    }
+
+    .char-count {
+      color: #4CAF50;
+    }
+  }
+
+  &.error {
+    .input-label {
+      color: #f44336;
+    }
+
+    .char-count {
+      color: #f44336;
+    }
+  }
+
+  // 响应式设计
+  @media screen and (min-width: 768px) {
+    padding: 24px;
+
+    .input-header {
+      margin-bottom: 16px;
+    }
+
+    .input-label {
+      font-size: 18px;
+    }
+
+    .description-textarea {
+      min-height: 150px;
+      font-size: 16px;
+      padding: 20px;
+    }
+
+    .char-count {
+      font-size: 16px;
+    }
+
+    .error-message {
+      font-size: 14px;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    max-width: 800px;
+    margin: 0 auto;
+
+    .description-textarea {
+      min-height: 180px;
+    }
+  }
+
+  // 暗色主题支持
+  @media (prefers-color-scheme: dark) {
+    background-color: #1a1a1a;
+
+    .input-label {
+      color: #fff;
+
+      .required-mark {
+        color: #ff6b6b;
+      }
+    }
+
+    .description-textarea {
+      background-color: #2a2a2a;
+      border-color: #444;
+      color: #fff;
+
+      &::placeholder {
+        color: #999;
+      }
+
+      &:focus {
+        border-color: #66BB6A;
+        box-shadow: 0 0 0 2px rgba(102, 187, 106, 0.2);
+      }
+
+      &:disabled {
+        background-color: #1a1a1a;
+        color: #666;
+        border-color: #444;
+      }
+
+      &.success {
+        border-color: #66BB6A;
+        background-color: #1a3a1a;
+
+        &:focus {
+          border-color: #66BB6A;
+          box-shadow: 0 0 0 2px rgba(102, 187, 106, 0.2);
+        }
+      }
+
+      &.error {
+        border-color: #ff6b6b;
+        background-color: #3a1a1a;
+
+        &:focus {
+          border-color: #ff6b6b;
+          box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
+        }
+      }
+    }
+
+    .error-message {
+      color: #ff6b6b;
+    }
+
+    .input-hint {
+      color: #aaa;
+    }
+
+    .char-count {
+      &.info {
+        color: #64B5F6;
+      }
+
+      &.warning {
+        color: #FFB74D;
+      }
+
+      &.error {
+        color: #ff6b6b;
+      }
+    }
+
+    &.success {
+      .input-label {
+        color: #66BB6A;
+      }
+
+      .char-count {
+        color: #66BB6A;
+      }
+    }
+
+    &.error {
+      .input-label {
+        color: #ff6b6b;
+      }
+
+      .char-count {
+        color: #ff6b6b;
+      }
+    }
+  }
+
+  // 小屏幕优化
+  @media screen and (max-width: 375px) {
+    padding: 16px;
+
+    .input-label {
+      font-size: 14px;
+    }
+
+    .description-textarea {
+      min-height: 100px;
+      padding: 12px;
+      font-size: 14px;
+    }
+
+    .char-count {
+      font-size: 12px;
+    }
+
+    .error-message {
+      font-size: 12px;
+    }
+  }
+
+  // 加载状态
+  &.loading {
+    opacity: 0.7;
+    pointer-events: none;
+
+    .description-textarea {
+      background-color: #f5f5f5;
+    }
+  }
+}
+
+// 动画效果
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.sport-description-input {
+  animation: fadeIn 0.3s ease-out;
+}

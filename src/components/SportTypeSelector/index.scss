@@ -1,0 +1,265 @@
+/**
+ * SportTypeSelector 组件样式
+ * 运动类型选择器的网格布局和交互样式
+ */
+
+.sport-type-selector {
+  padding: 20px 0;
+  background-color: #fff;
+
+  .selector-title {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16px;
+    padding: 0 20px;
+  }
+
+  .sport-type-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 0 20px;
+
+    // 响应式布局：平板设备
+    @media screen and (min-width: 768px) {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+
+    // 响应式布局：桌面设备
+    @media screen and (min-width: 1024px) {
+      grid-template-columns: repeat(6, 1fr);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+  }
+
+  .sport-type-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 8px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    background-color: #fafafa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    min-height: 80px;
+
+    // 悬停效果
+    &:hover:not(.disabled) {
+      border-color: #4CAF50;
+      background-color: #f1f8f4;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
+    }
+
+    // 选中状态
+    &.selected {
+      border-color: #4CAF50;
+      background-color: #e8f5e8;
+      
+      .sport-icon {
+        color: #4CAF50;
+        transform: scale(1.1);
+      }
+
+      .sport-label {
+        color: #4CAF50;
+        font-weight: 600;
+      }
+
+      // 选中标记
+      &::after {
+        content: '✓';
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 20px;
+        height: 20px;
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+      }
+    }
+
+    // 禁用状态
+    &.disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+      
+      .sport-icon,
+      .sport-label {
+        color: #ccc;
+      }
+    }
+
+    // 焦点状态（键盘导航）
+    &:focus {
+      outline: 2px solid #4CAF50;
+      outline-offset: 2px;
+    }
+
+    // 激活状态（点击时）
+    &:active:not(.disabled) {
+      transform: scale(0.95);
+    }
+  }
+
+  .sport-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    // 图标容器大小
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(76, 175, 80, 0.1);
+  }
+
+  .sport-label {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    line-height: 1.2;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  // 暗色主题支持
+  @media (prefers-color-scheme: dark) {
+    background-color: #1a1a1a;
+
+    .selector-title {
+      color: #fff;
+    }
+
+    .sport-type-item {
+      border-color: #444;
+      background-color: #2a2a2a;
+
+      &:hover:not(.disabled) {
+        border-color: #66BB6A;
+        background-color: #1a3a1a;
+      }
+
+      &.selected {
+        border-color: #66BB6A;
+        background-color: #1a3a1a;
+
+        .sport-icon {
+          color: #66BB6A;
+        }
+
+        .sport-label {
+          color: #66BB6A;
+        }
+
+        &::after {
+          background-color: #66BB6A;
+        }
+      }
+
+      &.disabled {
+        .sport-icon,
+        .sport-label {
+          color: #666;
+        }
+      }
+    }
+
+    .sport-icon {
+      background-color: rgba(102, 187, 106, 0.1);
+    }
+
+    .sport-label {
+      color: #ccc;
+    }
+  }
+
+  // 小屏幕设备优化
+  @media screen and (max-width: 375px) {
+    .sport-type-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 0 16px;
+    }
+
+    .sport-type-item {
+      padding: 12px 6px;
+      min-height: 70px;
+    }
+
+    .sport-icon {
+      font-size: 20px;
+      width: 32px;
+      height: 32px;
+      margin-bottom: 6px;
+    }
+
+    .sport-label {
+      font-size: 11px;
+    }
+  }
+
+  // 加载状态
+  &.loading {
+    .sport-type-item {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+  }
+}
+
+// 动画效果
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sport-type-item {
+  animation: fadeIn 0.3s ease-out;
+
+  // 为不同项添加延迟，创建渐入效果
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+}
+
+// 选中动画
+@keyframes selectedPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.sport-type-item.selected {
+  animation: selectedPulse 0.3s ease-in-out;
+}
