@@ -1,0 +1,442 @@
+/**
+ * 位置显示组件样式
+ * 提供位置信息的可视化展示和交互样式
+ */
+
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+// 基础样式
+.locationDisplay {
+  background: $white;
+  border-radius: $border-radius-lg;
+  border: 1px solid $border-color;
+  padding: $spacing-md;
+  margin: $spacing-sm 0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  // 点击效果
+  &:not(.loading):not(.error):not(.empty) {
+    cursor: pointer;
+    
+    &:hover {
+      box-shadow: $shadow-sm;
+      transform: translateY(-1px);
+    }
+    
+    &:active {
+      transform: translateY(0);
+      box-shadow: $shadow-xs;
+    }
+  }
+
+  // 加载状态
+  &.loading {
+    opacity: 0.7;
+    
+    .loadingIcon {
+      animation: spin 1s linear infinite;
+      
+      &::before {
+        content: '⟳';
+        font-size: 18px;
+        color: $primary-color;
+      }
+    }
+    
+    .loadingText {
+      color: $text-color-secondary;
+      font-size: $font-size-sm;
+      text-align: center;
+      padding: $spacing-md 0;
+    }
+  }
+
+  // 错误状态
+  &.error {
+    border-color: $error-color;
+    background-color: rgba($error-color, 0.05);
+    
+    .errorIcon {
+      &::before {
+        content: '⚠';
+        font-size: 18px;
+        color: $error-color;
+      }
+    }
+    
+    .errorMessage {
+      color: $error-color;
+      font-size: $font-size-sm;
+      text-align: center;
+      padding: $spacing-md 0;
+    }
+  }
+
+  // 空状态
+  &.empty {
+    border-style: dashed;
+    border-color: $border-color-light;
+    
+    .emptyIcon {
+      &::before {
+        content: '📍';
+        font-size: 18px;
+        color: $text-color-secondary;
+      }
+    }
+    
+    .emptyMessage {
+      color: $text-color-secondary;
+      font-size: $font-size-sm;
+      text-align: center;
+      padding: $spacing-md 0;
+    }
+  }
+
+  // 正常状态
+  &.normal {
+    border-color: $border-color;
+    
+    &:hover {
+      border-color: $primary-color-light;
+    }
+  }
+}
+
+// 头部区域
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-sm;
+  
+  .iconWrapper {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: $spacing-sm;
+    
+    // 不同状态的颜色
+    &.success {
+      background-color: rgba($success-color, 0.1);
+      .icon {
+        color: $success-color;
+      }
+    }
+    
+    &.warning {
+      background-color: rgba($warning-color, 0.1);
+      .icon {
+        color: $warning-color;
+      }
+    }
+    
+    &.error {
+      background-color: rgba($error-color, 0.1);
+      .icon {
+        color: $error-color;
+      }
+    }
+  }
+  
+  .title {
+    flex: 1;
+    font-size: $font-size-base;
+    font-weight: 500;
+    color: $text-color;
+    margin: 0;
+  }
+  
+  .refreshButton {
+    margin-left: $spacing-sm;
+    font-size: $font-size-xs;
+    padding: $spacing-xs $spacing-sm;
+    min-width: auto;
+    height: auto;
+    line-height: 1;
+  }
+}
+
+// 图标样式
+.icon {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  // 不同精度图标
+  &.high-accuracy {
+    &::before {
+      content: '🎯';
+    }
+  }
+  
+  &.medium-accuracy {
+    &::before {
+      content: '📍';
+    }
+  }
+  &.low-accuracy {
+    &::before {
+      content: '🌍';
+    }
+  }
+  
+  &.unknown {
+    &::before {
+      content: '❓';
+    }
+  }
+}
+
+// 内容区域
+.content {
+  padding-left: 40px; // 图标宽度 + 间距
+}
+
+// 地址区域
+.addressSection {
+  margin-bottom: $spacing-sm;
+  
+  .address {
+    font-size: $font-size-base;
+    color: $text-color;
+    line-height: 1.4;
+    margin-bottom: $spacing-xs;
+    display: block;
+  }
+  
+  .poi {
+    font-size: $font-size-sm;
+    color: $text-color-secondary;
+    background-color: $background-color;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius-sm;
+    display: inline-block;
+  }
+}
+
+// 详情区域
+.details {
+  .detailItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: $spacing-xs;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  .detailLabel {
+    font-size: $font-size-sm;
+    color: $text-color-secondary;
+    margin-right: $spacing-sm;
+    min-width: 40px;
+  }
+  
+  .detailValue {
+    font-size: $font-size-sm;
+    color: $text-color;
+    flex: 1;
+    
+    // 不同状态的颜色
+    &.success {
+      color: $success-color;
+    }
+    
+    &.warning {
+      color: $warning-color;
+    }
+    
+    &.error {
+      color: $error-color;
+    }
+  }
+}
+
+// 响应式设计
+@include respond-to(sm) {
+  .locationDisplay {
+    padding: $spacing-sm;
+    margin: $spacing-xs 0;
+  }
+  
+  .header {
+    .iconWrapper {
+      width: 28px;
+      height: 28px;
+      margin-right: $spacing-xs;
+    }
+    
+    .title {
+      font-size: $font-size-sm;
+    }
+  }
+  
+  .content {
+    padding-left: 36px;
+  }
+  
+  .addressSection {
+    .address {
+      font-size: $font-size-sm;
+    }
+    
+    .poi {
+      font-size: $font-size-xs;
+    }
+  }
+  
+  .details {
+    .detailItem {
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: $spacing-sm;
+    }
+    
+    .detailLabel {
+      margin-bottom: $spacing-xs;
+      margin-right: 0;
+    }
+    
+    .detailValue {
+      font-size: $font-size-xs;
+    }
+  }
+}
+
+// 深色模式适配
+@media (prefers-color-scheme: dark) {
+  .locationDisplay {
+    background: $color-dark-bg;
+    border-color: $color-dark-border;
+    
+    &.error {
+      background-color: rgba($error-color, 0.1);
+    }
+    
+    .title {
+      color: $color-dark-text-primary;
+    }
+    
+    .address {
+      color: $color-dark-text-primary;
+    }
+    
+    .poi {
+      background-color: $color-dark-bg-secondary;
+      color: $color-dark-text-secondary;
+    }
+    
+    .detailLabel {
+      color: $color-dark-text-secondary;
+    }
+    
+    .detailValue {
+      color: $color-dark-text-primary;
+    }
+    
+    .loadingText,
+    .errorMessage,
+    .emptyMessage {
+      color: $color-dark-text-secondary;
+    }
+  }
+}
+
+// 动画
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 可访问性增强
+@media (prefers-reduced-motion: reduce) {
+  .locationDisplay {
+    transition: none;
+    
+    &:not(.loading):not(.error):not(.empty) {
+      &:hover {
+        transform: none;
+      }
+    }
+  }
+  
+  .loadingIcon {
+    animation: none;
+  }
+}
+
+// 高对比度模式
+@media (prefers-contrast: high) {
+  .locationDisplay {
+    border-width: 2px;
+    
+    &.error {
+      border-color: $error-color;
+      background-color: rgba($error-color, 0.15);
+    }
+  }
+  
+  .header {
+    .iconWrapper {
+      border: 1px solid currentColor;
+    }
+  }
+}
+
+// 打印样式
+@media print {
+  .locationDisplay {
+    border: 1px solid #000;
+    box-shadow: none;
+    
+    .refreshButton {
+      display: none;
+    }
+  }
+}
+
+// 焦点样式（可访问性）
+.locationDisplay {
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+  
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+// 按钮焦点样式
+.refreshButton {
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+  
+  &:hover {
+    background-color: $primary-color-light;
+  }
+  
+  &:active {
+    background-color: $primary-color-dark;
+  }
+}

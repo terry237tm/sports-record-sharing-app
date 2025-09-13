@@ -1,6 +1,7 @@
 export default defineAppConfig({
   pages: [
     'pages/index/index',
+    'pages/location-demo/index',
     'pages/sports/index',
     'pages/sports/detail',
     'pages/share/index',
@@ -20,27 +21,28 @@ export default defineAppConfig({
     list: [
       {
         pagePath: 'pages/index/index',
-        text: '首页',
-        iconPath: 'assets/icons/home.png',
-        selectedIconPath: 'assets/icons/home-active.png'
+        text: '首页'
+        // 暂时移除图标路径，避免编译错误
+        // iconPath: 'assets/icons/home.png',
+        // selectedIconPath: 'assets/icons/home-active.png'
       },
       {
         pagePath: 'pages/sports/index',
-        text: '运动',
-        iconPath: 'assets/icons/sport.png',
-        selectedIconPath: 'assets/icons/sport-active.png'
+        text: '运动'
+        // iconPath: 'assets/icons/sport.png',
+        // selectedIconPath: 'assets/icons/sport-active.png'
       },
       {
         pagePath: 'pages/share/index',
-        text: '分享',
-        iconPath: 'assets/icons/share.png',
-        selectedIconPath: 'assets/icons/share-active.png'
+        text: '分享'
+        // iconPath: 'assets/icons/share.png',
+        // selectedIconPath: 'assets/icons/share-active.png'
       },
       {
         pagePath: 'pages/profile/index',
-        text: '我的',
-        iconPath: 'assets/icons/profile.png',
-        selectedIconPath: 'assets/icons/profile-active.png'
+        text: '我的'
+        // iconPath: 'assets/icons/profile.png',
+        // selectedIconPath: 'assets/icons/profile-active.png'
       }
     ]
   }

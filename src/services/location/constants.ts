@@ -201,3 +201,96 @@ export const PRIVACY_CONFIG = {
   // 位置数据上传间隔（毫秒）
   UPLOAD_INTERVAL: 60 * 60 * 1000 // 1小时
 } as const;
+
+/**
+ * 高级缓存配置
+ */
+export const ADVANCED_CACHE_CONFIG = {
+  // 最大缓存容量
+  MAX_CACHE_SIZE: 100,
+  
+  // 默认TTL（毫秒）
+  DEFAULT_TTL: 5 * 60 * 1000, // 5分钟
+  
+  // 清理间隔（毫秒）
+  CLEANUP_INTERVAL: 5 * 60 * 1000, // 5分钟
+  
+  // 持久化存储键
+  STORAGE_KEY: 'location_cache_v2',
+  
+  // 压缩阈值（字节）
+  COMPRESSION_THRESHOLD: 100 * 1024, // 100KB
+  
+  // 是否启用LRU
+  ENABLE_LRU: true
+} as const;
+
+/**
+ * 性能监控阈值
+ */
+export const PERFORMANCE_THRESHOLDS = {
+  // 最大响应时间（毫秒）
+  MAX_RESPONSE_TIME: 5000,
+  
+  // 最小响应时间（毫秒）
+  MIN_RESPONSE_TIME: 100,
+  
+  // 目标响应时间（毫秒）
+  TARGET_RESPONSE_TIME: 1000,
+  
+  // 成功率阈值
+  SUCCESS_RATE_THRESHOLD: 0.8,
+  
+  // 缓存命中率阈值
+  CACHE_HIT_RATE_THRESHOLD: 0.7,
+  
+  // 最大重试次数
+  MAX_RETRIES: 3,
+  
+  // 重试延迟（毫秒）
+  RETRY_DELAY: 1000
+} as const;
+
+/**
+ * 策略配置常量
+ */
+export const STRATEGY_CONFIG = {
+  // 策略权重配置
+  WEIGHTS: {
+    PERFORMANCE: 0.4,
+    ACCURACY: 0.3,
+    POWER: 0.3
+  },
+  
+  // 成功率阈值
+  SUCCESS_RATE_THRESHOLD: 0.8,
+  
+  // 响应时间阈值（毫秒）
+  RESPONSE_TIME_THRESHOLD: 3000,
+  
+  // 策略性能评分权重
+  METRIC_WEIGHTS: {
+    RESPONSE_TIME: 0.6,
+    SUCCESS_RATE: 0.4
+  }
+} as const;
+
+/**
+ * 存储键常量
+ */
+export const STORAGE_KEYS = {
+  // 位置缓存
+  LOCATION_CACHE: 'location_cache_data',
+  
+  // 权限状态
+  PERMISSION_STATUS: 'location_permission_status',
+  
+  // 用户设置
+  USER_SETTINGS: 'location_user_settings',
+  
+  // 审计日志
+  AUDIT_LOGS: 'location_audit_logs',
+  
+  // 性能指标
+  PERFORMANCE_METRICS: 'location_performance_metrics'
+} as const;

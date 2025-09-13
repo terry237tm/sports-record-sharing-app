@@ -86,6 +86,22 @@
             transform: translateY(1px);
           }
         }
+
+        .location-button {
+          flex: 1;
+          background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+          border: none;
+          color: #ffffff;
+          border-radius: 8px;
+          padding: 12px 24px;
+          font-size: 16px;
+          font-weight: bold;
+          transition: all 0.3s ease;
+
+          &:active {
+            transform: translateY(1px);
+          }
+        }
       }
 
       .result {

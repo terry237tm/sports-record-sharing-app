@@ -1,0 +1,209 @@
+// 基础混合宏定义
+
+// 文本溢出处理
+@mixin text-overflow() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 多行文本溢出
+@mixin text-overflow-multiline($lines: 2) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+  overflow: hidden;
+}
+
+// 清除浮动
+@mixin clearfix() {
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+// 居中定位
+@mixin center-position() {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// 水平居中
+@mixin horizontal-center() {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+// 垂直居中
+@mixin vertical-center() {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+// 弹性盒子居中
+@mixin flex-center() {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// 弹性盒子垂直居中
+@mixin flex-vertical-center() {
+  display: flex;
+  align-items: center;
+}
+
+// 弹性盒子水平居中
+@mixin flex-horizontal-center() {
+  display: flex;
+  justify-content: center;
+}
+
+// 按钮基础样式
+@mixin button-base() {
+  display: inline-block;
+  padding: 8px 16px;
+  border: none;
+  border-radius: $border-radius;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-base;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all $animation-duration $animation-timing-fn;
+  user-select: none;
+  
+  &:hover {
+    text-decoration: none;
+  }
+  
+  &:focus {
+    outline: none;
+  }
+  
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+// 卡片基础样式
+@mixin card-base() {
+  background: $white;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow-light;
+  overflow: hidden;
+}
+
+// 阴影效果
+@mixin shadow($level: 1) {
+  @if $level == 1 {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  } @else if $level == 2 {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  } @else if $level == 3 {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+}
+
+// 响应式字体大小
+@mixin responsive-font($min-size: 14px, $max-size: 16px, $min-width: 320px, $max-width: 1200px) {
+  font-size: $min-size;
+  
+  @media (min-width: $min-width) and (max-width: $max-width) {
+    font-size: calc(#{$min-size} + (#{$max-size} - #{$min-size}) * (100vw - #{$min-width}) / (#{$max-width} - #{$min-width}));
+  }
+  
+  @media (min-width: $max-width) {
+    font-size: $max-size;
+  }
+}
+
+// 移动端适配
+@mixin mobile-only {
+  @media (max-width: #{$screen-sm - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet-only {
+  @media (min-width: #{$screen-sm}) and (max-width: #{$screen-md - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop-only {
+  @media (min-width: #{$screen-md}) {
+    @content;
+  }
+}
+
+// 隐藏滚动条
+@mixin hide-scrollbar() {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+// 毛玻璃效果
+@mixin glass-effect($opacity: 0.1) {
+  background: rgba(255, 255, 255, $opacity);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+// 渐变背景
+@mixin gradient-bg($direction: 135deg, $color1: #667eea, $color2: #764ba2) {
+  background: linear-gradient($direction, $color1, $color2);
+}
+
+// 动画效果
+@mixin animation($name, $duration: $animation-duration, $timing: $animation-timing-fn, $delay: 0s, $iteration: 1, $direction: normal) {
+  animation: $name $duration $timing $delay $iteration $direction;
+}
+
+// 关键帧动画
+@mixin keyframes($name) {
+  @keyframes #{$name} {
+    @content;
+  }
+}
+
+// 响应式断点混合宏
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: #{$screen-xs}) {
+      @content;
+    }
+  } @else if $breakpoint == sm {
+    @media (max-width: #{$screen-sm - 1px}) {
+      @content;
+    }
+  } @else if $breakpoint == md {
+    @media (min-width: #{$screen-sm}) and (max-width: #{$screen-md - 1px}) {
+      @content;
+    }
+  } @else if $breakpoint == lg {
+    @media (min-width: #{$screen-md}) and (max-width: #{$screen-lg - 1px}) {
+      @content;
+    }
+  } @else if $breakpoint == xl {
+    @media (min-width: #{$screen-lg}) and (max-width: #{$screen-xl - 1px}) {
+      @content;
+    }
+  } @else if $breakpoint == xxl {
+    @media (min-width: #{$screen-xl}) {
+      @content;
+    }
+  }
+}

@@ -164,3 +164,9 @@ export enum StatisticsPeriod {
   YEAR = 'year',
   ALL = 'all'
 }
+
+/**
+ * 位置相关类型
+ * 从location.ts模块重新导出所有位置相关类型定义
+ */
+export * from './location'

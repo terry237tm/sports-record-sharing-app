@@ -1,0 +1,350 @@
+/**
+ * LocationSelector 组件样式
+ * 地图选点交互界面样式
+ */
+
+.location-selector {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+// 搜索框样式
+.search-box {
+  position: relative;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.search-input {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.search-placeholder {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+// 地图容器样式
+.map-container {
+  position: relative;
+  flex: 1;
+  min-height: 300px;
+  background-color: #f8f9fa;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+// 中心标记点样式
+.center-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.center-marker-icon {
+  width: 32px;
+  height: 40px;
+  display: block;
+}
+
+.dragging-hint {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.dragging-text {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+// 控制按钮样式
+.controls {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+}
+
+.btn-current-location {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  &:active {
+    background-color: #f8f9fa;
+  }
+}
+
+// 位置信息容器样式
+.location-info-container {
+  padding: 16px;
+  background-color: #ffffff;
+  border-top: 1px solid #e9ecef;
+}
+
+.location-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.location-icon {
+  font-size: 20px;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.location-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.location-address {
+  font-size: 16px;
+  font-weight: 500;
+  color: #212529;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.location-coords {
+  font-size: 12px;
+  color: #6c757d;
+  margin-bottom: 2px;
+}
+
+.location-accuracy {
+  font-size: 12px;
+  color: #28a745;
+  font-weight: 500;
+}
+
+// 空状态样式
+.location-info-empty {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.empty-text {
+  font-size: 16px;
+  color: #495057;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.empty-hint {
+  font-size: 12px;
+  color: #6c757d;
+  display: block;
+}
+
+// 加载状态样式
+.location-info-loading {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.loading-text {
+  font-size: 14px;
+  color: #6c757d;
+  display: block;
+}
+
+// 操作按钮样式
+.actions {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px 16px;
+}
+
+.btn-confirm {
+  flex: 1;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 8px;
+  
+  &:hover {
+    background-color: #0056b3;
+  }
+  
+  &:active {
+    background-color: #004085;
+  }
+  
+  &[disabled] {
+    background-color: #6c757d;
+    opacity: 0.6;
+  }
+}
+
+.btn-cancel {
+  flex: 1;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 8px;
+  
+  &:hover {
+    background-color: #f8f9fa;
+  }
+  
+  &:active {
+    background-color: #e9ecef;
+  }
+  
+  &[disabled] {
+    opacity: 0.6;
+  }
+}
+
+// 使用提示样式
+.usage-hint {
+  padding: 12px 16px;
+  background-color: #e3f2fd;
+  border-top: 1px solid #e9ecef;
+}
+
+.hint-text {
+  font-size: 12px;
+  color: #0277bd;
+  line-height: 1.4;
+}
+
+// 响应式设计
+@media (max-width: 480px) {
+  .location-selector {
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  .map-container {
+    min-height: 250px;
+  }
+  
+  .actions {
+    flex-direction: column;
+  }
+  
+  .btn-confirm,
+  .btn-cancel {
+    width: 100%;
+  }
+}
+
+// 深色模式支持
+@media (prefers-color-scheme: dark) {
+  .location-selector {
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+  
+  .search-box {
+    background-color: #2d2d2d;
+    border-bottom-color: #404040;
+  }
+  
+  .search-input {
+    background-color: #1a1a1a;
+    border-color: #404040;
+    color: #ffffff;
+  }
+  
+  .map-container {
+    background-color: #2d2d2d;
+  }
+  
+  .location-info-container {
+    background-color: #1a1a1a;
+    border-top-color: #404040;
+  }
+  
+  .location-address {
+    color: #ffffff;
+  }
+  
+  .location-coords,
+  .location-accuracy {
+    color: #cccccc;
+  }
+  
+  .empty-text {
+    color: #ffffff;
+  }
+  
+  .empty-hint,
+  .loading-text {
+    color: #cccccc;
+  }
+  
+  .btn-current-location {
+    background-color: #2d2d2d;
+    border-color: #404040;
+    color: #ffffff;
+    
+    &:active {
+      background-color: #404040;
+    }
+  }
+  
+  .btn-cancel {
+    background-color: #2d2d2d;
+    border-color: #404040;
+    color: #ffffff;
+    
+    &:hover {
+      background-color: #404040;
+    }
+    
+    &:active {
+      background-color: #525252;
+    }
+  }
+  
+  .usage-hint {
+    background-color: #1e3a5f;
+    border-top-color: #404040;
+  }
+  
+  .hint-text {
+    color: #81c784;
+  }
+}

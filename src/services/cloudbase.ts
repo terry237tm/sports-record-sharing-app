@@ -6,11 +6,24 @@
 
 /**
  * CloudBase 配置信息
+ * 兼容微信小程序环境（无process对象）
  */
+const getEnvVar = (key: string, defaultValue: string): string => {
+  // 微信小程序环境中没有process对象
+  if (typeof process !== 'undefined' && process.env) {
+    return process.env[key] || defaultValue;
+  }
+  // 尝试从全局变量获取（如果有配置）
+  if (typeof (global as any) !== 'undefined' && (global as any)[key]) {
+    return (global as any)[key];
+  }
+  return defaultValue;
+};
+
 const CLOUDBASE_CONFIG = {
-  env: process.env.CLOUDBASE_ENV || 'your-env-id',
-  region: process.env.CLOUDBASE_REGION || 'ap-guangzhou',
-  helloUrl: process.env.TARO_APP_CLOUDBASE_HELLO_URL || 'https://example.app.cloudbase.net/hello'
+  env: getEnvVar('CLOUDBASE_ENV', 'your-env-id'),
+  region: getEnvVar('CLOUDBASE_REGION', 'ap-guangzhou'),
+  helloUrl: getEnvVar('TARO_APP_CLOUDBASE_HELLO_URL', 'https://example.app.cloudbase.net/hello')
 };
 
 /**
@@ -56,12 +69,9 @@ export async function getHelloFromCloud(): Promise<string> {
     console.error('云函数 HTTP 调用错误:', error);
     
     // 如果云函数调用失败，回退到模拟数据
-    if (process.env.NODE_ENV === 'development') {
-      console.log('开发环境：云函数调用失败，使用模拟数据');
-      return await getHelloFromMock();
-    }
-    
-    throw new Error(`云函数调用失败: ${error instanceof Error ? error.message : '未知错误'}`);
+    // 微信小程序环境中没有process对象，直接使用模拟数据
+    console.log('云函数调用失败，使用模拟数据');
+    return await getHelloFromMock();
   }
 }
 

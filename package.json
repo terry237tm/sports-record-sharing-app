@@ -56,6 +56,8 @@
     "@tarojs/runtime": "4.1.6",
     "@tarojs/shared": "4.1.6",
     "@tarojs/taro": "4.1.6",
+    "@types/crypto-js": "^4.2.2",
+    "crypto-js": "^4.2.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-redux": "^8.1.3",

@@ -1,0 +1,515 @@
+/**
+ * 位置权限组件样式
+ * 提供权限请求、状态显示和用户引导的样式
+ */
+
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+// 基础样式
+.locationPermission {
+  background: $white;
+  border-radius: $border-radius-lg;
+  border: 1px solid $border-color;
+  padding: $spacing-lg;
+  margin: $spacing-md 0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  // 加载状态
+  &.loading {
+    opacity: 0.7;
+    
+    .loadingIcon {
+      animation: spin 1s linear infinite;
+      
+      &::before {
+        content: '⟳';
+        font-size: 24px;
+        color: $primary-color;
+      }
+    }
+    
+    .loadingText {
+      color: $text-color-secondary;
+      font-size: $font-size-base;
+      text-align: center;
+      padding: $spacing-md 0;
+    }
+  }
+
+  // 已授权状态
+  &.granted {
+    border-color: $success-color;
+    background-color: rgba($success-color, 0.05);
+    
+    .successMessage {
+      color: $success-color;
+      font-size: $font-size-base;
+      margin-bottom: $spacing-md;
+      display: block;
+    }
+    
+    .features {
+      background: rgba($success-color, 0.1);
+      border-radius: $border-radius-md;
+      padding: $spacing-md;
+      margin-top: $spacing-md;
+    }
+    
+    .featureItem {
+      display: block;
+      font-size: $font-size-sm;
+      color: $text-color-secondary;
+      margin-bottom: $spacing-xs;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  // 引导状态
+  &.guide {
+    border-color: $warning-color;
+    background-color: rgba($warning-color, 0.05);
+    
+    .guideTitle {
+      font-size: $font-size-lg;
+      font-weight: 500;
+      color: $text-color;
+      margin-bottom: $spacing-sm;
+      display: block;
+    }
+    
+    .guideContent {
+      font-size: $font-size-base;
+      color: $text-color-secondary;
+      line-height: 1.5;
+      margin-bottom: $spacing-lg;
+      display: block;
+    }
+    
+    .guideSteps {
+      background: rgba($warning-color, 0.1);
+      border-radius: $border-radius-md;
+      padding: $spacing-md;
+      margin-bottom: $spacing-lg;
+    }
+    
+    .stepTitle {
+      font-size: $font-size-base;
+      font-weight: 500;
+      color: $text-color;
+      margin-bottom: $spacing-sm;
+      display: block;
+    }
+    
+    .stepItem {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: $spacing-sm;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    
+    .stepNumber {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: $warning-color;
+      color: white;
+      font-size: $font-size-xs;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: $spacing-sm;
+      flex-shrink: 0;
+    }
+    
+    .stepText {
+      font-size: $font-size-sm;
+      color: $text-color-secondary;
+      line-height: 1.4;
+      flex: 1;
+    }
+    
+    .guideActions {
+      display: flex;
+      gap: $spacing-sm;
+      justify-content: center;
+      
+      .settingsButton {
+        flex: 1;
+        max-width: 200px;
+      }
+      
+      .refreshButton {
+        flex: 0 0 auto;
+        background: transparent;
+        border: 1px solid $border-color;
+        color: $text-color-secondary;
+        
+        &:hover {
+          background: $background-color;
+        }
+      }
+    }
+  }
+
+  // 请求状态
+  &.request {
+    border-color: $info-color;
+    background-color: rgba($info-color, 0.05);
+    
+    .requestTitle {
+      font-size: $font-size-lg;
+      font-weight: 500;
+      color: $text-color;
+      margin-bottom: $spacing-sm;
+      display: block;
+    }
+    
+    .requestMessage {
+      font-size: $font-size-base;
+      color: $text-color-secondary;
+      line-height: 1.5;
+      margin-bottom: $spacing-md;
+      display: block;
+    }
+    
+    .benefits {
+      background: rgba($info-color, 0.1);
+      border-radius: $border-radius-md;
+      padding: $spacing-md;
+      margin-bottom: $spacing-md;
+    }
+    
+    .benefitItem {
+      display: block;
+      font-size: $font-size-sm;
+      color: $text-color-secondary;
+      margin-bottom: $spacing-xs;
+      
+      &:last-child {
+        margin-bottom: 0;
+    }
+    }
+    
+    .privacyNote {
+      font-size: $font-size-xs;
+      color: $text-color-tertiary;
+      font-style: italic;
+      margin-bottom: $spacing-lg;
+      display: block;
+    }
+    
+    .requestActions {
+      display: flex;
+      gap: $spacing-sm;
+      justify-content: center;
+      
+      .requestButton {
+        flex: 1;
+        max-width: 200px;
+      }
+      
+      .laterButton {
+        flex: 0 0 auto;
+        background: transparent;
+        border: 1px solid $border-color;
+        color: $text-color-secondary;
+        
+        &:hover {
+          background: $background-color;
+        }
+      }
+    }
+  }
+}
+
+// 状态区域
+.statusSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-lg;
+  text-align: center;
+  
+  .statusIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: $spacing-md;
+    font-size: 24px;
+    
+    // 不同状态的颜色
+    &.success {
+      background-color: rgba($success-color, 0.1);
+      color: $success-color;
+    }
+    
+    &.warning {
+      background-color: rgba($warning-color, 0.1);
+      color: $warning-color;
+    }
+    
+    &.error {
+      background-color: rgba($error-color, 0.1);
+      color: $error-color;
+    }
+    
+    &.info {
+      background-color: rgba($info-color, 0.1);
+      color: $info-color;
+    }
+  }
+  
+  .statusText {
+    font-size: $font-size-lg;
+    font-weight: 500;
+    color: $text-color;
+    margin: 0;
+  }
+}
+
+// 内容区域
+.content {
+  text-align: center;
+}
+
+// 响应式设计
+@include respond-to(sm) {
+  .locationPermission {
+    padding: $spacing-md;
+    margin: $spacing-sm 0;
+    
+    .statusSection {
+      flex-direction: column;
+      margin-bottom: $spacing-md;
+      
+      .statusIcon {
+        margin-right: 0;
+        margin-bottom: $spacing-sm;
+      }
+      
+      .statusText {
+        font-size: $font-size-base;
+      }
+    }
+    
+    .guideActions,
+    .requestActions {
+      flex-direction: column;
+      
+      .settingsButton,
+      .requestButton {
+        max-width: none;
+      }
+    }
+    
+    .benefits,
+    .guideSteps {
+      padding: $spacing-sm;
+    }
+    
+    .benefitItem,
+    .stepText {
+      font-size: $font-size-xs;
+    }
+  }
+}
+
+// 深色模式适配
+@media (prefers-color-scheme: dark) {
+  .locationPermission {
+    background: $color-dark-bg;
+    border-color: $color-dark-border;
+    
+    &.granted {
+      background-color: rgba($success-color, 0.1);
+      
+      .features {
+        background: rgba($success-color, 0.15);
+      }
+      
+      .featureItem {
+        color: $color-dark-text-secondary;
+      }
+    }
+    
+    &.guide {
+      background-color: rgba($warning-color, 0.1);
+      
+      .guideSteps {
+        background: rgba($warning-color, 0.15);
+      }
+      
+      .stepNumber {
+        background: $warning-color;
+      }
+      
+      .stepText {
+        color: $color-dark-text-secondary;
+      }
+    }
+    
+    &.request {
+      background-color: rgba($info-color, 0.1);
+      
+      .benefits {
+        background: rgba($info-color, 0.15);
+      }
+      
+      .benefitItem {
+        color: $color-dark-text-secondary;
+      }
+      
+      .privacyNote {
+        color: $color-dark-text-tertiary;
+      }
+    }
+    
+    .statusText {
+      color: $color-dark-text-primary;
+    }
+    
+    .loadingText,
+    .requestMessage,
+    .guideContent {
+      color: $color-dark-text-secondary;
+    }
+    
+    .requestTitle,
+    .guideTitle,
+    .stepTitle {
+      color: $color-dark-text-primary;
+    }
+  }
+}
+
+// 动画
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 可访问性增强
+@media (prefers-reduced-motion: reduce) {
+  .locationPermission {
+    transition: none;
+    
+    .loadingIcon {
+      animation: none;
+    }
+  }
+}
+
+// 高对比度模式
+@media (prefers-contrast: high) {
+  .locationPermission {
+    border-width: 2px;
+    
+    &.granted {
+      border-color: $success-color;
+      background-color: rgba($success-color, 0.15);
+    }
+    
+    &.guide {
+      border-color: $warning-color;
+      background-color: rgba($warning-color, 0.15);
+    }
+    
+    &.request {
+      border-color: $info-color;
+      background-color: rgba($info-color, 0.15);
+    }
+  }
+  
+  .statusIcon {
+    border: 1px solid currentColor;
+  }
+}
+
+// 打印样式
+@media print {
+  .locationPermission {
+    border: 1px solid #000;
+    box-shadow: none;
+    
+    .settingsButton,
+    .requestButton,
+    .laterButton,
+    .refreshButton {
+      display: none;
+    }
+  }
+}
+
+// 焦点样式（可访问性）
+.locationPermission {
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+  
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+// 按钮焦点样式
+.settingsButton,
+.requestButton,
+.laterButton,
+.refreshButton {
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+  
+  &:hover {
+    opacity: 0.8;
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+// 按钮加载状态
+.requestButton {
+  &[loading] {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+}
+
+// 状态图标动画
+.statusIcon {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}

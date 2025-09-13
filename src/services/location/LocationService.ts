@@ -3,7 +3,7 @@
  * 提供位置获取、地址解析、权限管理等功能
  */
 
-import Taro from '@tarojs/taro';
+import * as Taro from '@tarojs/taro';
 import {
   LocationData,
   WeChatLocation,
@@ -128,6 +128,7 @@ export class LocationService implements LocationStrategy {
       const locationData: LocationData = {
         latitude: wechatLocation.latitude,
         longitude: wechatLocation.longitude,
+        address: addressInfo.address || '未知位置',
         accuracy: wechatLocation.accuracy,
         timestamp: Date.now(),
         ...addressInfo
@@ -310,7 +311,9 @@ export class LocationService implements LocationStrategy {
     const now = Date.now();
     const timeout = this.options.cacheTimeout || CACHE_CONFIG.DEFAULT_CACHE_TIMEOUT;
     
-    for (const [key, item] of this.cache.entries()) {
+    // 创建数组副本以避免在迭代时修改 Map
+    const entries = Array.from(this.cache.entries());
+    for (const [key, item] of entries) {
       if (now - item.timestamp > timeout) {
         this.cache.delete(key);
       }
@@ -329,23 +332,23 @@ export class LocationService implements LocationStrategy {
    */
   private createLocationError(error: any, type?: LocationErrorType): LocationError {
     let errorType = type || LocationErrorType.UNKNOWN_ERROR;
-    let message = ERROR_MESSAGES.UNKNOWN_ERROR;
+    let message: string = ERROR_MESSAGES.UNKNOWN_ERROR;
     
     if (error.message) {
       const errorMsg = error.message.toLowerCase();
       
       if (errorMsg.includes('permission') || errorMsg.includes('auth')) {
         errorType = LocationErrorType.PERMISSION_DENIED;
-        message = ERROR_MESSAGES.PERMISSION_DENIED;
+        message = ERROR_MESSAGES.PERMISSION_DENIED as string;
       } else if (errorMsg.includes('service') || errorMsg.includes('disabled')) {
         errorType = LocationErrorType.SERVICE_DISABLED;
-        message = ERROR_MESSAGES.SERVICE_DISABLED;
+        message = ERROR_MESSAGES.SERVICE_DISABLED as string;
       } else if (errorMsg.includes('timeout')) {
         errorType = LocationErrorType.TIMEOUT;
-        message = ERROR_MESSAGES.TIMEOUT;
+        message = ERROR_MESSAGES.TIMEOUT as string;
       } else if (errorMsg.includes('network')) {
         errorType = LocationErrorType.NETWORK_ERROR;
-        message = ERROR_MESSAGES.NETWORK_ERROR;
+        message = ERROR_MESSAGES.NETWORK_ERROR as string;
       }
     }
     
